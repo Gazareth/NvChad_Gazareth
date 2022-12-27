@@ -35,7 +35,7 @@ return {
   buttons = {
     type = "group",
     val = {
-      button("SPC f f", "  Find File  ", ":Telescope find_files<CR>"),
+      -- button("SPC f f", "  Find File  ", ":Telescope find_files<CR>"),
       button("SPC f p", "  Open Project", ":Telescope projections<CR>"),
       button("SPC f s", "  Load Previous Session", ":RestoreLastProjectionsSession <CR>"),
       button("SPC f o", "  Recent File  ", ":Telescope oldfiles<CR>"),

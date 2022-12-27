@@ -5,11 +5,15 @@ local themes = require "custom.overidden_themes"
 local highlights = require "custom.highlights"
 
 M.ui = {
-  theme_toggle = { "onedark", "one_light" },
-  theme = "monokai-pro",
+  theme_toggle = { "monokai_pro", "gruvbox_light" },
+  theme = "monokai_pro",
   changed_themes = themes,
   hl_override = highlights.override,
   hl_add = highlights.add,
+  tabufline = {
+    lazyload = false,
+    overriden_modules = nil,
+  },
 }
 
 M.plugins = require "custom.plugins"

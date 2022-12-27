@@ -10,10 +10,11 @@ M.disabled = {
 M.general = {
   n = {
     [";"] = { ":", "command mode", opts = { nowait = true } },
-    ["Y"] = { "0vg_", "select line (content only)" },
-    ["<leader><enter>"] = { ":call feedkeys('] [ i')<cr>", "Insert mode with new line above and below."},
-    ["ZA"] = { "<cmd> wa | qa <CR>", "spaced equals"},
+    ["<C-t>"] = { "<cmd> tabnew | Telescope find_files <CR>", "Open new tab and telescope find files" },
     ["<leader>ps"] = { "<cmd> PackerSync <CR>", "Sync packages"},
+    ["ZA"] = { "<cmd> wa | qa <CR>", "Save all files then quit vim"},
+    ["Y"] = { "0vg_", "select line (excluding EOL character)" },
+    ["<leader><enter>"] = { ":call feedkeys('] [ i')<cr>", "Insert mode with new line above and below."},
     -- ["<leader>m"] = { function()
     --   local timer = vim.loop.new_timer()
     --   local print_timer = vim.loop.new_timer()
@@ -30,17 +31,22 @@ M.general = {
     --     timer:close()
     --   end)
     -- end
-    -- },
+    -- ,
   },
   i = {
     ["="] = { " = ", "spaced equals"},
+    [">="] = { " >= ", "spaced greater than or equal to"},
+    ["<="] = { " >= ", "spaced less than or equal to"},
     ["=="] = { " == ", "spaced equality"},
     ["=>"] = { " => ", "spaced arrow operator"},
+    ["{<space>"] = { "{  }<left><left>", "spaced curly braces"},
   },
   c = {
   },
   v = {
-    ["<leader>/"] = { 'y:%s/<C-R>"/', "Replace all instances of selection." },
+    ["<leader>/sa"] = { 'y:%s/<C-R>"//g<left><left><left>', "Replace selection on all lines." },
+    ["<leader>/sc"] = { 'y:%s/<C-R>"//gc<left><left><left>', "Replace selection on all lines (with confirmation)." },
+    ["<leader>/sl"] = { 'y:s/<C-R>"//g<left><left><left>', "Replace selection on current line." },
   }
 }
 
@@ -71,7 +77,7 @@ M.nvimtree = {
 
 M.telescope = {
   n = {
-    ["<leader>fp"] = { "<cmd> Telescope projects <CR>", "find projects" },
+    ["<leader>fp"] = { "<cmd> Telescope projections <CR>", "find projects" },
   }
 }
 

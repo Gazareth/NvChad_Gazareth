@@ -3,8 +3,27 @@ local overrides = require "custom.plugins.overrides"
 
 return {
 
+  ["nathom/filetype.nvim"] = {},
+
+  ["lewis6991/gitsigns.nvim"] = {
+    -- setup = function()
+    --   require("core.lazy_load").gitsigns()
+    -- end,
+    rm_default_opts = true,
+    config = function()
+      require("plugins.configs.others").gitsigns()
+    end,
+  },
+
   ["nvim-telescope/telescope.nvim"] = {
-    override_options = overrides.telescope,
+    rm_default_opts = true,
+    config = function()
+      require "plugins.configs.telescope"
+    end,
+    setup = function()
+      require("core.utils").load_mappings "telescope"
+    end,
+    override_options = overrides.telescope
   },
 
   ["goolord/alpha-nvim"] = {
@@ -64,9 +83,13 @@ return {
             if pcall(require, "neo-tree") then vim.cmd [[Neotree action=close]] end
           end
         },
+        restore_hooks = {
+          post = function()
+            vim.cmd("cd " .. vim.loop.cwd())
+          end
+        }
       })
 
-      -- Bind <leader>fp to Telescope projections
       require('telescope').load_extension('projections')
 
       -- Create command to restore latest session
@@ -90,61 +113,11 @@ return {
     end
   },
 
-  -- ["Shatur/neovim-session-manager"] = {},
-  -- ["olimorris/persisted.nvim"] = {
-  --   after = "telescope.nvim",
-  --   config = function()
-  --     require("persisted").setup()
-  --     require("telescope").load_extension("persisted") -- To load the telescope extension
-  --   end,
-  -- },
-
-  ["ahmedkhalf/project.nvim"] = {
-    --   after = "telescope.nvim",
-    config = function()
-      --     require('telescope').load_extension('projects')
-      require("project_nvim").setup({
-        -- Manual mode doesn't automatically change your root directory, so you have
-        -- the option to manually do so using `:ProjectRoot` command.
-        manual_mode = false,
-
-        -- Methods of detecting the root directory. **"lsp"** uses the native neovim
-        -- lsp, while **"pattern"** uses vim-rooter like glob pattern matching. Here
-        -- order matters: if one is not detected, the other is used as fallback. You
-        -- can also delete or rearangne the detection methods.
-        detection_methods = { "lsp", "pattern" },
-
-        -- All the patterns used to detect root dir, when **"pattern"** is in
-        -- detection_methods
-        patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json" },
-
-        -- Table of lsp clients to ignore by name
-        -- eg: { "efm", ... }
-        ignore_lsp = {},
-
-        -- Don't calculate root dir on specific directories
-        -- Ex: { "~/.cargo/*", ... }
-        exclude_dirs = {},
-
-        -- Show hidden files in telescope
-        show_hidden = false,
-
-        -- When set to false, you will get a message when project.nvim changes your
-        -- directory.
-        silent_chdir = true,
-      })
-    end,
-
-    -- Path where project.nvim will store the project history for use in
-    -- telescope
-    datapath = vim.fn.stdpath("data"),
-  },
-
   ["nvim-telescope/telescope-ui-select.nvim"] = {
     after = "telescope.nvim",
     config = function()
-      require('telescope').load_extension('projects')
-    end,
+      require('telescope').load_extension('ui-select')
+    end
   },
 
   ["mawkler/modicator.nvim"] = {
@@ -215,9 +188,6 @@ return {
       require "custom.plugins.null-ls"
     end,
   },
-
-  ["numToStr/Comment.nvim"] = {},
-
   -- remove plugin
   -- ["hrsh7th/cmp-path"] = false,
 }

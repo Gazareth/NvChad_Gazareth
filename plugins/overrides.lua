@@ -75,7 +75,6 @@ M.telescope = {
   defaults = {
     mappings = {
       n = {
-        -- ["q"] = require("telescope.actions").close,
         ["dd"] = function(pickerOpts)
           local actions = require('telescope.actions')
           actions.delete_buffer(pickerOpts)
@@ -83,6 +82,7 @@ M.telescope = {
       },
     },
   },
+  -- extensions_list = { "themes", "terms", "projections" },
 }
 
 return M
