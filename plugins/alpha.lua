@@ -31,18 +31,21 @@ local function button(sc, txt, keybind)
 end
 
 return {
-  headerPaddingBottom = { type = "padding", val = 2 },
+  headerPaddingBottom = { type = "padding", val = 4 },
   buttons = {
     type = "group",
     val = {
-      -- button("SPC f f", "  Find File  ", ":Telescope find_files<CR>"),
-      button("SPC f p", "  Open Project", ":Telescope projections<CR>"),
       button("SPC f s", "  Load Previous Session", ":RestoreLastProjectionsSession <CR>"),
+      button("SPC f p", "  Open Project", ":Telescope projections<CR>"),
       button("SPC f o", "  Recent File  ", ":Telescope oldfiles<CR>"),
+      -- button("SPC f f", "  Find File  ", ":Telescope find_files<CR>"),
       -- button("SPC f w", "  Find Word  ", ":Telescope live_grep<CR>"),
       -- button("SPC b m", "  Bookmarks  ", ":Telescope marks<CR>"),
       button("SPC t h", "  Themes  ", ":Telescope themes<CR>"),
-      button("SPC e s", "  Settings", ":e $MYVIMRC | :cd %:p:h <CR>"),
+      -- button("SPC e s", "⌨  Keyboard Mappings", ":e stdpath('config') . '/custom/mappings.lua' | :noautocmd lcd %:p:h <CR>"),
+      button("SPC e s", "⌨  Keyboard Mappings", ":TZFocus"),
+      button("SPC p s", "↻  Sync packages", ":PackerSync <CR>"),
+      button("SPC e s", "  Settings", ":e $MYVIMRC | :noautocmd lcd %:p:h <CR>"),
     },
     opts = {
       spacing = 1,

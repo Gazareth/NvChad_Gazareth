@@ -4,6 +4,8 @@ M.disabled = {
   n = {
     ["<leader>n"] = { "", "toggle line number" },
     ["<leader>rn"] = { "", "toggle relative number" },
+    ["<C-n>"] = { "", "toggle nvimtree" },
+    ["<leader>e"] = { "", "focus nvimtree" },
   }
 }
 
@@ -15,6 +17,9 @@ M.general = {
     ["ZA"] = { "<cmd> wa | qa <CR>", "Save all files then quit vim"},
     ["Y"] = { "0vg_", "select line (excluding EOL character)" },
     ["<leader><enter>"] = { ":call feedkeys('] [ i')<cr>", "Insert mode with new line above and below."},
+    ["<TAB>"] = { "<C-W><C-W>", "Switch to next window" },
+    ["<S-Tab>"] = { "<C-W><C-P>", "Switch to previous window" },
+    ["<F3>"] = { ":ZenMode <CR>", "Toggle \"Total Zen\" mode" },
     -- ["<leader>m"] = { function()
     --   local timer = vim.loop.new_timer()
     --   local print_timer = vim.loop.new_timer()
@@ -40,6 +45,7 @@ M.general = {
     ["=="] = { " == ", "spaced equality"},
     ["=>"] = { " => ", "spaced arrow operator"},
     ["{<space>"] = { "{  }<left><left>", "spaced curly braces"},
+    ["[<space>"] = { "[  ]<left><left>", "spaced square braces"},
   },
   c = {
   },
@@ -74,6 +80,24 @@ M.nvimtree = {
     ["<leader>fe"] = { "<cmd> NvimTreeFocus <CR>", "focus nvimtree" },
   }
 }
+
+-- M.tabufline = {
+--   n = {
+--     -- cycle through buffers
+--     ["<C-Tab>"] = {
+--       function()
+--         require("nvchad_ui.tabufline").tabuflineNext()
+--       end,
+--       "goto next buffer",
+--     },
+--     ["<C-S-Tab>"] = {
+--       function()
+--         require("nvchad_ui.tabufline").tabuflinePrev()
+--       end,
+--       "goto prev buffer",
+--     },
+--   }
+-- }
 
 M.telescope = {
   n = {

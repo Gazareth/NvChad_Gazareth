@@ -3,12 +3,8 @@ local overrides = require "custom.plugins.overrides"
 
 return {
 
-  ["nathom/filetype.nvim"] = {},
-
+  -- OVERRIDES --
   ["lewis6991/gitsigns.nvim"] = {
-    -- setup = function()
-    --   require("core.lazy_load").gitsigns()
-    -- end,
     rm_default_opts = true,
     config = function()
       require("plugins.configs.others").gitsigns()
@@ -56,8 +52,11 @@ return {
   ["kyazdani42/nvim-tree.lua"] = {
     override_options = overrides.nvimtree,
   },
+  -- OVERRIDES END --
 
-  -- My installed packages --
+  ["nathom/filetype.nvim"] = {},
+  ["sharkdp/fd"] = {},
+
   ["mbbill/undotree"] = {},
   ["Asheq/close-buffers.vim"] = {},
   ["gnikdroy/projections.nvim"] = {
@@ -120,6 +119,7 @@ return {
     end
   },
 
+  -- Multi-coloured indent indicators
   ["mawkler/modicator.nvim"] = {
     after = "base46",
     config = function()
@@ -141,8 +141,39 @@ return {
       })
     end,
   },
-  ["szw/vim-maximizer"] = {},
-  ["folke/lsp-colors.nvim"] = {},
+
+
+  ["folke/zen-mode.nvim"] = {
+    config = function()
+      require("zen-mode").setup {
+      window = {
+        width = .75
+      }
+    }
+    end
+  },
+
+  -- ["shortcuts/no-neck-pain.nvim"] = {},
+  ["folke/twilight.nvim"] = {},
+
+  ["roman/golden-ratio"] = {},
+--   ["Pocco81/true-zen.nvim"] = {
+--     config = function()
+--       require("true-zen").setup {
+--         modes = {
+--           ataraxis = {
+--             options = {
+--               number = true,
+--             },
+--           },
+--         },
+--         integrations = {
+--           twilight = true
+--         }
+--       }
+--     end,
+-- },
+  -- ["folke/lsp-colors.nvim"] = {},
 
   ["max397574/better-escape.nvim"] = {
     event = "InsertEnter",
@@ -151,9 +182,16 @@ return {
     end,
   },
 
-  ["sharkdp/fd"] = {},
+  ["ofirgall/open.nvim"] = {
+    requires = "nvim-lua/plenary.nvim",
+    config = function()
+      require("open").setup()
+      vim.keymap.set('n', 'gx', require('open').open_cword)
+    end,
+  },
 
-  ["phanviet/vim-monokai-pro"] = {},
+  -- Theme is handled through NvChad
+  -- ["phanviet/vim-monokai-pro"] = {},
 
   ["tommcdo/vim-exchange"] = {},
   ["ggandor/leap.nvim"] = {},
@@ -167,7 +205,19 @@ return {
   ["iago-lito/vim-visualMarks"] = {},
   ["AndrewRadev/tagalong.vim"] = {},
 
-  ["mg979/vim-visual-multi"] = {},
+  ["mg979/vim-visual-multi"] = {
+    config = function()
+      local g = vim.g
+
+      g.VM_silent_exit = 1
+      g.VM_set_statusline = 0
+
+      g.VM_Mono_hl = "VisualMultiCursor"
+      g.VM_Extend_hl = "Visual"
+      g.VM_Cursor_hl = "VisualModeCursor"
+      g.VM_Insert_hl = "InsertModeCursor"
+    end
+  },
   ["bkad/CamelCaseMotion"] = {},
   ["RRethy/vim-illuminate"] = {},
   ["folke/trouble.nvim"] = {

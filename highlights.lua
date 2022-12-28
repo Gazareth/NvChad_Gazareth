@@ -78,8 +78,11 @@ M.override = {
 }
 
 M.add = {
-  NvimTreeOpenedFolderName = { fg = "green", bold = true, italic = true },
+  NvimTreeOpenedFolderName = { fg = "blue", bold = true },
   NvimTreeOpenedFile = { fg = "teal", bold = true, italic = true },
+  VisualMultiCursor = { fg = "grey_fg2", bg = "dark_purple" },
+  InsertModeCursor = { fg = "black", bg = "sun" },
+  VisualModeCursor = { fg = "black", bg = "dark_purple" },
   IndentBlanklineIndent1 = { fg  = "#E06C75" },
   IndentBlanklineIndent2 = { fg  = "#E5C07B" },
   IndentBlanklineIndent3 = { fg  = "#98C379" },
