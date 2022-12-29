@@ -80,6 +80,7 @@ M.override = {
 M.add = {
   NvimTreeOpenedFolderName = { fg = "blue", bold = true },
   NvimTreeOpenedFile = { fg = "teal", bold = true, italic = true },
+  YankHighlight = { fg = "#dddddd", bg = "one_bg3" },
   VisualMultiCursor = { fg = "grey_fg2", bg = "dark_purple" },
   InsertModeCursor = { fg = "black", bg = "sun" },
   VisualModeCursor = { fg = "black", bg = "dark_purple" },

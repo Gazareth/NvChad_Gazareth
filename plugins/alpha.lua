@@ -43,8 +43,9 @@ return {
       -- button("SPC b m", "  Bookmarks  ", ":Telescope marks<CR>"),
       button("SPC t h", "  Themes  ", ":Telescope themes<CR>"),
       -- button("SPC e s", "⌨  Keyboard Mappings", ":e stdpath('config') . '/custom/mappings.lua' | :noautocmd lcd %:p:h <CR>"),
-      button("SPC e s", "⌨  Keyboard Mappings", ":TZFocus"),
-      button("SPC p s", "↻  Sync packages", ":PackerSync <CR>"),
+      button("SPC e k", "  Keyboard Mappings", ":EditKeyMappings <CR>"),
+      button("SPC t k", "  Command Lookup", ":Telescope keymaps <CR>"),
+      button("SPC p s", "  Sync packages", ":PackerSync <CR>"),
       button("SPC e s", "  Settings", ":e $MYVIMRC | :noautocmd lcd %:p:h <CR>"),
     },
     opts = {

@@ -48,6 +48,7 @@ M.mason = {
 
 -- nvimtree
 M.nvimtree = {
+  remove_keymaps = { "<Tab>" },
   open_on_setup = true,
   ignore_buffer_on_setup = true,
   hijack_unnamed_buffer_when_opening = true,

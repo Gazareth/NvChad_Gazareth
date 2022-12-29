@@ -9,17 +9,33 @@ M.disabled = {
   }
 }
 
+-- Dashboard/Settings shortcuts
+-- M.alpha = {
+-- }
+
 M.general = {
   n = {
-    [";"] = { ":", "command mode", opts = { nowait = true } },
-    ["<C-t>"] = { "<cmd> tabnew | Telescope find_files <CR>", "Open new tab and telescope find files" },
+    -- Meta stuff
     ["<leader>ps"] = { "<cmd> PackerSync <CR>", "Sync packages"},
+
+    -- Modes
+    [";"] = { ":", "command mode", opts = { nowait = true } },
+
+    ["ZW"] = { "<cmd> wa <CR>", "Save all files"},
     ["ZA"] = { "<cmd> wa | qa <CR>", "Save all files then quit vim"},
-    ["Y"] = { "0vg_", "select line (excluding EOL character)" },
-    ["<leader><enter>"] = { ":call feedkeys('] [ i')<cr>", "Insert mode with new line above and below."},
+
+    -- Tab/window switching
+    ["<C-t>"] = { "<cmd> tabnew | Telescope find_files <CR>", "Open new tab and telescope find files" },
+    ["<C-Tab>"] = { "<cmd> tabnext <CR>", "Switch to next tab" },
+    ["<C-S-Tab>"] = { "<cmd> tabprev <CR>", "Switch to previous tab" },
     ["<TAB>"] = { "<C-W><C-W>", "Switch to next window" },
     ["<S-Tab>"] = { "<C-W><C-P>", "Switch to previous window" },
-    ["<F3>"] = { ":ZenMode <CR>", "Toggle \"Total Zen\" mode" },
+
+    -- Help with editing/writing text
+    ["Y"] = { "^vg_", "select line (excluding EOL character)" },
+    ["<leader><enter>"] = { ":call feedkeys('] [ i')<cr>", "Insert mode with new line above and below."},
+
+    -- Print out current mode on a delay (for debugging)
     -- ["<leader>m"] = { function()
     --   local timer = vim.loop.new_timer()
     --   local print_timer = vim.loop.new_timer()
@@ -81,23 +97,41 @@ M.nvimtree = {
   }
 }
 
--- M.tabufline = {
---   n = {
---     -- cycle through buffers
---     ["<C-Tab>"] = {
---       function()
---         require("nvchad_ui.tabufline").tabuflineNext()
---       end,
---       "goto next buffer",
---     },
---     ["<C-S-Tab>"] = {
---       function()
---         require("nvchad_ui.tabufline").tabuflinePrev()
---       end,
---       "goto prev buffer",
---     },
---   }
--- }
+M.tabufline = {
+  n = {
+    -- cycle through buffers
+    ["<leader><TAB>"] = {
+      function()
+        require("nvchad_ui.tabufline").tabuflineNext()
+      end,
+      "goto next buffer",
+    },
+    ["<leader><S-Tab>"] = {
+      function()
+        require("nvchad_ui.tabufline").tabuflinePrev()
+      end,
+      "goto prev buffer",
+    },
+  }
+}
+
+M.zen_mode = {
+  n = {
+    ["<S-F3>"] = { ":ZenMode <CR>", "Toggle \"Total Zen\" mode" },
+  }
+}
+
+M.focus = {
+  n = {
+    ["<F3>"] = { "<cmd> FocusMaximise <CR>", "Focus current window" }
+  }
+}
+
+M.undoquit = {
+n = {
+    ["<C-S-T>"] = { "<cmd> Undoquit <CR>", "Undo last quit window" }
+  }
+}
 
 M.telescope = {
   n = {

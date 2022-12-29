@@ -1,5 +1,4 @@
 local overrides = require "custom.plugins.overrides"
--- local colors = require("base46").get_theme_tb "base_30"
 
 return {
 
@@ -28,7 +27,6 @@ return {
     override_options = overrides.alpha,
   },
 
-  -- Override plugin definition options
   ["neovim/nvim-lspconfig"] = {
     config = function()
       require "plugins.configs.lspconfig"
@@ -36,7 +34,10 @@ return {
     end,
   },
 
-  -- overrde plugin configs
+  ["folke/which-key.nvim"] = {
+    disable = false,
+  },
+
   ["nvim-treesitter/nvim-treesitter"] = {
     override_options = overrides.treesitter,
   },
@@ -142,6 +143,38 @@ return {
     end,
   },
 
+  ["yuttie/comfortable-motion.vim"] = {
+    config = function()
+      local g = vim.g
+      g.comfortable_motion_no_default_key_mappings = 1
+      g.comfortable_motion_interval = 1000.0 / 120.0
+      g.comfortable_motion_friction = 240.0
+      g.comfortable_motion_air_drag = 16.0
+
+      g.comfortable_motion_impulse_multiplier = 4  -- Feel free to increase/decrease this value.
+
+      local flickCommand = function(flickAmountMultiplier)
+        return function()
+          local flickAmountFloor = math.floor(flickAmountMultiplier)
+          local winHeight = vim.api.nvim_command_output("echo winheight(0)")
+          local cursorJumpAmount = math.abs(math.floor(flickAmountMultiplier * tonumber(winHeight) / 4))
+          local cursorJumpDir = "j"
+
+          if(string.sub(flickAmountMultiplier,1,1) == "-") then
+            cursorJumpDir = "k"
+          end
+          local cmd = "normal "..cursorJumpAmount..cursorJumpDir
+          vim.cmd("normal "..cursorJumpAmount..cursorJumpDir)
+          vim.cmd(":call comfortable_motion#flick(g:comfortable_motion_impulse_multiplier * winheight(0) * "..flickAmountMultiplier..")")
+        end
+      end
+
+      vim.keymap.set('n', '<C-d>', flickCommand("2.15"), { desc = "Jump down by half a screen" })
+      vim.keymap.set('n', '<C-u>', flickCommand("-2.15"), { desc = "Jump up by half a screen" })
+      -- vim.keymap.set('n', '<C-f>', flickCommand("4"), { desc = "Jump down a screen" })
+      -- vim.keymap.set('n', '<C-b>', flickCommand("-4"), { desc = "Jump up a screen" })
+    end
+  },
 
   ["folke/zen-mode.nvim"] = {
     config = function()
@@ -156,24 +189,27 @@ return {
   -- ["shortcuts/no-neck-pain.nvim"] = {},
   ["folke/twilight.nvim"] = {},
 
-  ["roman/golden-ratio"] = {},
---   ["Pocco81/true-zen.nvim"] = {
---     config = function()
---       require("true-zen").setup {
---         modes = {
---           ataraxis = {
---             options = {
---               number = true,
---             },
---           },
---         },
---         integrations = {
---           twilight = true
---         }
---       }
---     end,
--- },
-  -- ["folke/lsp-colors.nvim"] = {},
+  -- ["roman/golden-ratio"] = {
+  --   config = function()
+  --     vim.g.golden_ratio_exclude_nonmodifiable = 1
+  --   end
+  -- },
+  ["beauwilliams/focus.nvim"] = {
+    config = function() require("focus").setup() end
+  },
+
+  ["numToStr/BufOnly.nvim"] = {
+    cmd = "BufOnly"
+  },
+
+  ["AndrewRadev/undoquit.vim"] = {
+    config = function()
+      vim.g.undoquit_mapping = ""
+      vim.g.undoquit_tab_mapping = ""
+    end
+  },
+
+  ["folke/lsp-colors.nvim"] = {},
 
   ["max397574/better-escape.nvim"] = {
     event = "InsertEnter",
