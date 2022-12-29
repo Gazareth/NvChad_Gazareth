@@ -1,6 +1,6 @@
 local M = {}
 
-M.alpha = require "custom.plugins.alpha"
+M.alpha = require "custom.plugins.overrides.alpha"
 
 M.blankline = {
   space_char_blankline = " ",
@@ -11,6 +11,16 @@ M.blankline = {
   -- use_treesitter = true,
   -- use_treesitter_scope = true,
   space_char = "",
+  filetype_exclude = {
+    "NvimTree",
+    "lspinfo",
+    "packer",
+    "checkhealth",
+    "help",
+    "man",
+    "alpha",
+    "",
+  },
   char_highlight_list = {
     "IndentBlanklineIndent1",
     "IndentBlanklineIndent2",

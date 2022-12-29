@@ -13,7 +13,6 @@ local options  = {
   autowrite = true,
   autoread = true,
 
-  hlsearch = false,
   incsearch = true,
 
   scrolloff = 1,
@@ -21,7 +20,7 @@ local options  = {
 
   wrap = false,
   list = true,
-  listchars = "tab:» ,extends:›,precedes:‹,nbsp:·,trail:·",
+  listchars = "tab:» ,extends:►,precedes:◄,nbsp:·,trail:▒,",
   -- opt.listchars:append "multispace:⋅"
   -- opt.listchars:append "eol:↴"
 }
@@ -68,24 +67,44 @@ local getConfigFilePath = function(configRoot, relPath, pathSeparator)
   return table.concat(fullPathParts, pathSeparator)
 end
 
--- Set up a usercommand to open keyboard shortcuts
-vim.api.nvim_create_user_command("EditKeyMappings", function()
+local getOSConfig = function()
   local pathSeparator = "/"
   if(vim.g.is_windows) then
     pathSeparator = "\\"
   end
-  local configRoot = vim.api.nvim_command_output("echo stdpath('config')") -- Vim returns "/" on all OS's
+  local configRoot = vim.fn.stdpath('config')
+  return { pathSeparator = pathSeparator, configRoot = configRoot }
+end
 
-  local coreMappingsPath = getConfigFilePath(configRoot, "lua\\core\\mappings.lua", pathSeparator)
-  local customMappingsPath = getConfigFilePath(configRoot, "lua\\custom\\mappings.lua", pathSeparator)
+-- Set up a usercommand to open keyboard shortcuts
+vim.api.nvim_create_user_command("EditKeyMappings", function()
+  local OSCfg = getOSConfig()
+  local coreMappingsPath = getConfigFilePath(OSCfg.configRoot, "lua\\core\\mappings.lua", OSCfg.pathSeparator)
+  local customMappingsPath = getConfigFilePath(OSCfg.configRoot, "lua\\custom\\mappings.lua", OSCfg.pathSeparator)
 
   vim.cmd("tabnew "..coreMappingsPath.." | vsp "..customMappingsPath)
+end, {})
+
+vim.api.nvim_create_user_command("EditInstalledPlugins", function()
+  local OSCfg = getOSConfig()
+  local corePluginsPath = getConfigFilePath(OSCfg.configRoot, "lua\\plugins\\init.lua", OSCfg.pathSeparator)
+  local customPluginsPath = getConfigFilePath(OSCfg.configRoot, "lua\\custom\\plugins\\init.lua", OSCfg.pathSeparator)
+
+  vim.cmd("tabnew "..corePluginsPath.." | vsp "..customPluginsPath)
+end, {})
+
+vim.api.nvim_create_user_command("EditCustomOptions", function()
+  local OSCfg = getOSConfig()
+  local corePluginsPath = getConfigFilePath(OSCfg.configRoot, "lua\\core\\options.lua", OSCfg.pathSeparator)
+  local customPluginsPath = getConfigFilePath(OSCfg.configRoot, "lua\\custom\\init.lua", OSCfg.pathSeparator)
+
+  vim.cmd("tabnew "..corePluginsPath.." | vsp "..customPluginsPath)
 end, {})
 
 -- Highlight yanked text
 vim.api.nvim_create_autocmd({ "TextYankPost" }, {
    callback = function()
-      vim.highlight.on_yank { higroup = "YankHighlight", timeout = 450 }
+      vim.highlight.on_yank { higroup = "YankHighlight", timeout = 375 }
    end,
 })
 

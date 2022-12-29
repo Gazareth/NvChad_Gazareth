@@ -1,7 +1,7 @@
 local g = vim.g
 
 -- vim.opt.guicursor = ""
-vim.opt.guifont = { "FiraCode_NFM:h12:#e-subpixelantialias:#h-none" }
+vim.opt.guifont = { "FiraCode_NFM:h11:#e-subpixelantialias:#h-none" }
 -- g.neovide_scale_factor = 1.0
 g.neovide_cursor_vfx_mode = "wireframe"
 -- g.neovide_cursor_vfx_particle_lifetime = 2.5

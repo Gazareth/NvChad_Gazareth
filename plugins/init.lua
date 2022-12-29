@@ -30,7 +30,7 @@ return {
   ["neovim/nvim-lspconfig"] = {
     config = function()
       require "plugins.configs.lspconfig"
-      require "custom.plugins.lspconfig"
+      require "custom.plugins.overrides.lspconfig"
     end,
   },
 
@@ -56,60 +56,13 @@ return {
   -- OVERRIDES END --
 
   ["nathom/filetype.nvim"] = {},
-  ["sharkdp/fd"] = {},
 
   ["mbbill/undotree"] = {},
   ["Asheq/close-buffers.vim"] = {},
   ["gnikdroy/projections.nvim"] = {
     after = "telescope.nvim",
     config = function()
-      require("projections").setup({
-        workspaces = {
-          "X:\\Development\\Games\\Both",
-          "C:\\Users\\Gareth\\AppData\\Local",
-          "X:\\Development\\vim\\NvChad",
-        },
-        patterns = {
-          ".git", ".svn", ".hg"
-        },
-        -- Close nvim-tree window on exit
-        store_hooks = {
-          pre = function()
-            -- nvim-tree 
-            local nvim_tree_present, api = pcall(require, "nvim-tree.api")
-            if nvim_tree_present then api.tree.close() end
-
-            -- neo-tree
-            if pcall(require, "neo-tree") then vim.cmd [[Neotree action=close]] end
-          end
-        },
-        restore_hooks = {
-          post = function()
-            vim.cmd("cd " .. vim.loop.cwd())
-          end
-        }
-      })
-
-      require('telescope').load_extension('projections')
-
-      -- Create command to restore latest session
-      local Session = require("projections.session")
-      vim.api.nvim_create_user_command("RestoreLastProjectionsSession", function()
-        Session.restore_latest()
-      end, {})
-
-      -- Autostore session on VimExit
-      vim.api.nvim_create_autocmd({ 'VimLeavePre' }, {
-        callback = function() Session.store(vim.loop.cwd()) end,
-      })
-
-      -- Switch to project if vim was started in a project dir
-      local switcher = require("projections.switcher")
-      vim.api.nvim_create_autocmd({ "VimEnter" }, {
-        callback = function()
-          if vim.fn.argc() == 0 then switcher.switch(vim.loop.cwd()) end
-        end,
-      })
+      require "custom.plugins.configs.projections"
     end
   },
 
@@ -124,55 +77,13 @@ return {
   ["mawkler/modicator.nvim"] = {
     after = "base46",
     config = function()
-      require('modicator').setup({
-        show_warnings = true, -- Show warning if any required option is missing
-        highlights = {
-          modes = {
-            ['i'] = require("modicator").get_highlight_fg('St_InsertModeSep'),
-            ['c'] = require("modicator").get_highlight_fg('St_CommandModeSep'),
-            ['v'] = require("modicator").get_highlight_fg('St_VisualModeSep'),
-            ['V'] = require("modicator").get_highlight_fg('St_VisualModeSep'),
-            [''] = require("modicator").get_highlight_fg('St_VisualModeSep'),
-            ['s'] = require("modicator").get_highlight_fg('St_VisualModeSep'),
-            ['S'] = require("modicator").get_highlight_fg('St_VisualModeSep'),
-            ['R'] = require("modicator").get_highlight_fg('St_ReplaceModeSep'),
-            ['t'] = require("modicator").get_highlight_fg('St_TerminalModeSep'),
-          },
-        },
-      })
+      require "custom.plugins.configs.modicator"
     end,
   },
 
   ["yuttie/comfortable-motion.vim"] = {
     config = function()
-      local g = vim.g
-      g.comfortable_motion_no_default_key_mappings = 1
-      g.comfortable_motion_interval = 1000.0 / 120.0
-      g.comfortable_motion_friction = 240.0
-      g.comfortable_motion_air_drag = 16.0
-
-      g.comfortable_motion_impulse_multiplier = 4  -- Feel free to increase/decrease this value.
-
-      local flickCommand = function(flickAmountMultiplier)
-        return function()
-          local flickAmountFloor = math.floor(flickAmountMultiplier)
-          local winHeight = vim.api.nvim_command_output("echo winheight(0)")
-          local cursorJumpAmount = math.abs(math.floor(flickAmountMultiplier * tonumber(winHeight) / 4))
-          local cursorJumpDir = "j"
-
-          if(string.sub(flickAmountMultiplier,1,1) == "-") then
-            cursorJumpDir = "k"
-          end
-          local cmd = "normal "..cursorJumpAmount..cursorJumpDir
-          vim.cmd("normal "..cursorJumpAmount..cursorJumpDir)
-          vim.cmd(":call comfortable_motion#flick(g:comfortable_motion_impulse_multiplier * winheight(0) * "..flickAmountMultiplier..")")
-        end
-      end
-
-      vim.keymap.set('n', '<C-d>', flickCommand("2.15"), { desc = "Jump down by half a screen" })
-      vim.keymap.set('n', '<C-u>', flickCommand("-2.15"), { desc = "Jump up by half a screen" })
-      -- vim.keymap.set('n', '<C-f>', flickCommand("4"), { desc = "Jump down a screen" })
-      -- vim.keymap.set('n', '<C-b>', flickCommand("-4"), { desc = "Jump up a screen" })
+      require "custom.plugins.configs.comfortable-motion"
     end
   },
 
@@ -243,15 +154,7 @@ return {
 
   ["mg979/vim-visual-multi"] = {
     config = function()
-      local g = vim.g
-
-      g.VM_silent_exit = 1
-      g.VM_set_statusline = 0
-
-      g.VM_Mono_hl = "VisualMultiCursor"
-      g.VM_Extend_hl = "Visual"
-      g.VM_Cursor_hl = "VisualModeCursor"
-      g.VM_Insert_hl = "InsertModeCursor"
+      require "custom.plugins.configs.vim-visual-multi"
     end
   },
   ["bkad/CamelCaseMotion"] = {},
@@ -271,7 +174,7 @@ return {
   ["jose-elias-alvarez/null-ls.nvim"] = {
     after = "nvim-lspconfig",
     config = function()
-      require "custom.plugins.null-ls"
+      require "custom.plugins.configs.null-ls"
     end,
   },
   -- remove plugin

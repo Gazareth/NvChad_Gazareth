@@ -77,9 +77,25 @@ M.override = {
   },
 }
 
+local searchHighlight = function(isCurrent)
+  local fg_col = "black"
+  local bg_col = "purple"
+  local isBold  = false
+  if isCurrent then
+    -- fg_col = "#ffffff"
+    bg_col = "dark_purple"
+    isBold = true
+  end
+  return { fg = fg_col, bg = bg_col, bold = isBold }
+end
+
 M.add = {
-  NvimTreeOpenedFolderName = { fg = "blue", bold = true },
-  NvimTreeOpenedFile = { fg = "teal", bold = true, italic = true },
+  -- NvimTreeOpenedFolderName = { fg = "blue", bold = true },
+  -- NvimTreeOpenedFile = { fg = "teal", bold = true, italic = true },
+  CurSearch = searchHighlight(true),
+  IncSearch = searchHighlight(true),
+  Search = searchHighlight(false),
+  Substitute = { fg = "black", bg = "sun", bold = true },
   YankHighlight = { fg = "#dddddd", bg = "one_bg3" },
   VisualMultiCursor = { fg = "grey_fg2", bg = "dark_purple" },
   InsertModeCursor = { fg = "black", bg = "sun" },

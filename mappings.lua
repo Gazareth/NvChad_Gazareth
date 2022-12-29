@@ -17,6 +17,7 @@ M.general = {
   n = {
     -- Meta stuff
     ["<leader>ps"] = { "<cmd> PackerSync <CR>", "Sync packages"},
+    ["<leader>cd"] = { "<cmd> :cd %:p:h <CR>", "Set directory to current file's" },
 
     -- Modes
     [";"] = { ":", "command mode", opts = { nowait = true } },
@@ -29,7 +30,7 @@ M.general = {
     ["<C-Tab>"] = { "<cmd> tabnext <CR>", "Switch to next tab" },
     ["<C-S-Tab>"] = { "<cmd> tabprev <CR>", "Switch to previous tab" },
     ["<TAB>"] = { "<C-W><C-W>", "Switch to next window" },
-    ["<S-Tab>"] = { "<C-W><C-P>", "Switch to previous window" },
+    ["<S-Tab>"] = { "<C-W><S-W>", "Switch to previous window" },
 
     -- Help with editing/writing text
     ["Y"] = { "^vg_", "select line (excluding EOL character)" },
@@ -68,7 +69,7 @@ M.general = {
   v = {
     ["<leader>/sa"] = { 'y:%s/<C-R>"//g<left><left><left>', "Replace selection on all lines." },
     ["<leader>/sc"] = { 'y:%s/<C-R>"//gc<left><left><left>', "Replace selection on all lines (with confirmation)." },
-    ["<leader>/sl"] = { 'y:s/<C-R>"//g<left><left><left>', "Replace selection on current line." },
+    ["<leader>/sl"] = { 'y:s/<C-R>"//g<left><left>', "Replace selection on current line." },
   }
 }
 
