@@ -46,8 +46,8 @@ return {
       button("SPC e k", "  Keyboard Mappings", ":EditKeyMappings <CR>"),
       button("SPC t k", "  Command Lookup", ":Telescope keymaps <CR>"),
 
-      button("SPC e o", " Configure Options", ":EditCustomOptions <CR>"),
-      button("SPC e p", " Configure Plugins", ":EditInstalledPlugins <CR>"),
+      button("SPC e o", "  Set Options", ":EditCustomOptions <CR>"),
+      button("SPC e p", "  Configure Plugins", ":EditInstalledPlugins <CR>"),
       button("SPC p s", "  Sync packages", ":PackerSync <CR>"),
       button("SPC e s", "  Settings", ":e $MYVIMRC | :noautocmd lcd %:p:h <CR>"),
     },
