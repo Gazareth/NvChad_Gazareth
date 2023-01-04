@@ -38,6 +38,7 @@ return {
       button("SPC f s", "  Load Previous Session", ":RestoreLastProjectionsSession <CR>"),
       button("SPC f p", "  Open Project", ":Telescope projections<CR>"),
       button("SPC f o", "  Recent File  ", ":Telescope oldfiles<CR>"),
+      button("SPC t e", "  Terminal  ", ":terminal <CR>"),
       -- button("SPC f f", "  Find File  ", ":Telescope find_files<CR>"),
       -- button("SPC f w", "  Find Word  ", ":Telescope live_grep<CR>"),
       -- button("SPC b m", "  Bookmarks  ", ":Telescope marks<CR>"),
@@ -47,9 +48,11 @@ return {
       button("SPC t k", "  Command Lookup", ":Telescope keymaps <CR>"),
 
       button("SPC e o", "  Set Options", ":EditCustomOptions <CR>"),
+      button("SPC e d", "舘 Configure Dashboard", ":EditCustomDashboard <CR>"),
       button("SPC e p", "  Configure Plugins", ":EditInstalledPlugins <CR>"),
       button("SPC p s", "  Sync packages", ":PackerSync <CR>"),
       button("SPC e s", "  Settings", ":e $MYVIMRC | :noautocmd lcd %:p:h <CR>"),
+      button("q", "  Quit Neovim", ":qa <CR>"),
     },
     opts = {
       spacing = 1,
