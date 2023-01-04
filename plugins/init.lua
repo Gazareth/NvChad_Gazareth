@@ -3,6 +3,22 @@ local overrides = require "custom.plugins.overrides"
 return {
 
   -- OVERRIDES --
+  ["NvChad/base46"] = {
+    config = function()
+      local ok, base46 = pcall(require, "base46")
+
+      if ok then
+        base46.load_theme()
+        local theme = base46.get_theme_tb("base_16")
+
+        for i = 0, 15, 1 do
+          vim.g["terminal_color_"..i] = theme[string.format("base%02X", i)]
+        end
+      end
+
+    end
+  },
+
   ["lewis6991/gitsigns.nvim"] = {
     rm_default_opts = true,
     config = function()
@@ -12,6 +28,7 @@ return {
 
   ["nvim-telescope/telescope.nvim"] = {
     rm_default_opts = true,
+    after = "plenary.nvim",
     config = function()
       require "plugins.configs.telescope"
     end,
@@ -23,7 +40,6 @@ return {
 
   ["goolord/alpha-nvim"] = {
     disable = false,
-    -- after = "projections.nvim",
     override_options = overrides.alpha,
   },
 
@@ -66,6 +82,13 @@ return {
     end
   },
 
+  ["zane-/cder.nvim"] = {
+    after = "telescope.nvim",
+    config = function()
+      require('telescope').load_extension('cder')
+    end
+  },
+
   ["nvim-telescope/telescope-ui-select.nvim"] = {
     after = "telescope.nvim",
     config = function()
@@ -90,10 +113,10 @@ return {
   ["folke/zen-mode.nvim"] = {
     config = function()
       require("zen-mode").setup {
-      window = {
-        width = .75
+        window = {
+          width = .75
+        }
       }
-    }
     end
   },
 
@@ -137,9 +160,16 @@ return {
     end,
   },
 
-  -- Theme is handled through NvChad
-  -- ["phanviet/vim-monokai-pro"] = {},
-
+  ["gbprod/substitute.nvim"] = {
+    config = function()
+      require("substitute").setup()
+      -- Lua
+      vim.keymap.set("n", "s", "<cmd>lua require('substitute').operator()<cr>", { desc = "Substitute (With motion)" ,noremap = true })
+      vim.keymap.set("n", "ss", "<cmd>lua require('substitute').line()<cr>", { desc = "Substitute (Line)" ,noremap = true })
+      vim.keymap.set("n", "S", "<cmd>lua require('substitute').eol()<cr>", { desc = "Substitute (To end of line)" ,noremap = true })
+      vim.keymap.set("x", "s", "<cmd>lua require('substitute').visual()<cr>", { desc = "Substitute (Visual selection)" ,noremap = true })
+    end
+  },
   ["tommcdo/vim-exchange"] = {},
   ["ggandor/leap.nvim"] = {},
   ["tpope/vim-fugitive"] = {},
