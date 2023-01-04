@@ -1,27 +1,41 @@
 local g = vim.g
 
+local make_font_cfg = function(font_size)
+  return { "FiraCode_NFM:h"..font_size..":#e-subpixelantialias:#h-none" }
+end
 -- vim.opt.guicursor = ""
-vim.opt.guifont = { "FiraCode_NFM:h11:#e-subpixelantialias:#h-none" }
--- g.neovide_scale_factor = 1.0
+g.neovide_font_size = 11
+vim.opt.guifont = make_font_cfg(g.neovide_font_size)
+
 g.neovide_cursor_vfx_mode = "wireframe"
--- g.neovide_cursor_vfx_particle_lifetime = 2.5
--- g.neovide_cursor_vfx_particle_density = 64.0
--- g.neovide_cursor_vfx_particle_speed = 12.0
--- g.neovide_floating_blur_amount_x = 2.0
--- g.neovide_floating_blur_amount_y = 2.0
--- g.neovide_transparency = 0.985
 
-
--- g.neovide_profiler = true
 g.neovide_refresh_rate = 120
--- g.neovide_refresh_rate_idle = 120
--- g.neovide_no_idle = true
 
 g.neovide_scroll_animation_length = 0.375
 
 g.neovide_hide_mouse_when_typing = true
 
-g.neovide_remember_window_size = true
+-- This option is currently faulty
+-- g.neovide_remember_window_size = true
+
+-- Increase/Decrease font size
+local function change_font(is_increase)
+  local increment = 1
+  if not is_increase then
+    increment = -1
+  end
+  g.neovide_font_size = g.neovide_font_size + increment
+  -- print("<Neovide> Font size set to "..g.neovide_font_size)
+  vim.opt.guifont = make_font_cfg(g.neovide_font_size)
+end
+
+vim.keymap.set("n", "<C-]>", function()
+  change_font(true)
+end)
+
+vim.keymap.set("n", "<C-[>", function()
+  change_font(false)
+end)
 
 vim.keymap.set("n", "<F11>", function()
   if (g.neovide_fullscreen == true) then
