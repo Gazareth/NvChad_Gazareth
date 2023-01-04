@@ -10,8 +10,15 @@ M.disabled = {
 }
 
 -- Dashboard/Settings shortcuts
--- M.alpha = {
--- }
+local switch_window = function(command)
+  return function()
+    vim.cmd("wincmd "..command)
+    local newFileType = vim.bo.filetype
+    if newFileType == "NvimTree" then
+      vim.cmd("wincmd "..command)
+    end
+  end
+end
 
 M.general = {
   n = {
@@ -26,11 +33,13 @@ M.general = {
     ["ZA"] = { "<cmd> wa | qa <CR>", "Save all files then quit vim"},
 
     -- Tab/window switching
-    ["<C-t>"] = { "<cmd> tabnew | Telescope find_files <CR>", "Open new tab and telescope find files" },
+    ["<C-w><C-v>"] = { "<cmd> :vert sb # <CR>", "Open a vertical split of current and previous buffer" },
+    ["<C-w><C-t>"] = { "<cmd> tabc <CR>", "Close tab" },
+    ["<C-t>"] = { "<cmd> tabnew | Alpha <CR>", "Open new tab and run Alpha (dashboard)" },
     ["<C-Tab>"] = { "<cmd> tabnext <CR>", "Switch to next tab" },
     ["<C-S-Tab>"] = { "<cmd> tabprev <CR>", "Switch to previous tab" },
-    ["<TAB>"] = { "<C-W><C-W>", "Switch to next window" },
-    ["<S-Tab>"] = { "<C-W><S-W>", "Switch to previous window" },
+    ["<TAB>"] = { switch_window("w"), "Switch to next window" },
+    ["<S-Tab>"] = { switch_window("W"), "Switch to previous window" },
 
     -- Help with editing/writing text
     ["Y"] = { "^vg_", "select line (excluding EOL character)" },
@@ -67,7 +76,7 @@ M.general = {
   c = {
   },
   v = {
-    ["<leader>/sa"] = { 'y:%s/<C-R>"//g<left><left><left>', "Replace selection on all lines." },
+    ["<leader>/sa"] = { 'y:%s/<C-R>"//g<left><left>', "Replace selection on all lines." },
     ["<leader>/sc"] = { 'y:%s/<C-R>"//gc<left><left><left>', "Replace selection on all lines (with confirmation)." },
     ["<leader>/sl"] = { 'y:s/<C-R>"//g<left><left>', "Replace selection on current line." },
   }
@@ -137,6 +146,12 @@ n = {
 M.telescope = {
   n = {
     ["<leader>fp"] = { "<cmd> Telescope projections <CR>", "find projects" },
+  }
+}
+
+M.trouble = {
+  n = {
+    ["<leader>tc"] = { "<cmd> TroubleToggle <CR>", "Toggle Trouble (Diagnostics)" },
   }
 }
 
