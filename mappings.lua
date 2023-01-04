@@ -20,11 +20,28 @@ local switch_window = function(command)
   end
 end
 
+local current_file_dir = function()
+  return vim.fn.expand("%:p:h")
+end
+
+local explore_current_file_dir = function()
+  if vim.g.is_windows then
+    local command = '!explorer.exe "'..current_file_dir()..'"'
+    print(command)
+    vim.cmd(command)
+    -- vim.cmd('!explorer.exe "'..current_file_dir():gsub("\\", "\\\\")..'"')
+  else
+    vim.cmd('open '..current_file_dir())
+  end
+end
+
 M.general = {
   n = {
     -- Meta stuff
     ["<leader>ps"] = { "<cmd> PackerSync <CR>", "Sync packages"},
     ["<leader>cd"] = { "<cmd> :cd %:p:h <CR>", "Set directory to current file's" },
+    ["<leader>ycd"] = { function() vim.fn.setreg("*", current_file_dir()) end, "Yank current file directory to clipboard" },
+    ["<leader>ecd"] = { explore_current_file_dir, "Open explorer at current directory (windows)" },
 
     -- Modes
     [";"] = { ":", "command mode", opts = { nowait = true } },
@@ -84,19 +101,23 @@ M.general = {
 
 vim.g.camelcasemotion_key = '<leader>'
 
----- Leap keymaps ----
-for _, _1_ in ipairs({{{"n", "x", "o"}, "-", "<Plug>(leap-forward-to)"}, {{"n", "x", "o"}, "_", "<Plug>(leap-backward-to)"}, {{"x", "o"}, "x", "<Plug>(leap-forward-till)"}, {{"x", "o"}, "X", "<Plug>(leap-backward-till)"}, {{"n", "x", "o"}, "gs", "<Plug>(leap-cross-window)"}}) do
-  local _each_2_ = _1_
-  local modes = _each_2_[1]
-  local lhs = _each_2_[2]
-  local rhs = _each_2_[3]
-  for _0, mode in ipairs(modes) do
-    if (force_3f or ((vim.fn.mapcheck(lhs, mode) == "") and (vim.fn.hasmapto(rhs, mode) == 0))) then
-      vim.keymap.set(mode, lhs, rhs, {silent = true})
-    else
+local setLeapKeymaps = function()
+  ---- Leap keymaps ----
+  for _, _1_ in ipairs({{{"n", "x", "o"}, "-", "Leap: forward-to"}, {{"n", "x", "o"}, "+", "Leap: backward-to"}, {{"x", "o"}, "x", "<Plug>(leap-forward-till)"}, {{"x", "o"}, "X", "Leap: backward-till"}, {{"n", "x", "o"}, "gs", "Leap: cross-window"}}) do
+    local _each_2_ = _1_
+    local modes = _each_2_[1]
+    local lhs = _each_2_[2]
+    local rhs = _each_2_[3]
+    for _0, mode in ipairs(modes) do
+      if (force_3f or ((vim.fn.mapcheck(lhs, mode) == "") and (vim.fn.hasmapto(rhs, mode) == 0))) then
+        vim.keymap.set(mode, lhs, rhs, {silent = true})
+      else
+      end
     end
   end
 end
+
+setLeapKeymaps()
 
 M.nvimtree = {
   n = {
@@ -138,7 +159,7 @@ M.focus = {
 }
 
 M.undoquit = {
-n = {
+  n = {
     ["<C-S-T>"] = { "<cmd> Undoquit <CR>", "Undo last quit window" }
   }
 }
