@@ -1,3 +1,4 @@
+
 local M = {}
 
 M.alpha = require "custom.plugins.overrides.alpha"
@@ -82,18 +83,76 @@ M.nvimtree = {
   },
 }
 
-M.telescope = {
-  defaults = {
-    mappings = {
-      n = {
-        ["dd"] = function(pickerOpts)
-          local actions = require('telescope.actions')
-          actions.delete_buffer(pickerOpts)
+local get_cder_opts = function()
+  local HOME = os.getenv("HOME")
+
+  local cder_opts = {
+    prompt_title = function()
+      return "cder ["..HOME.."]"
+    end,
+    previewer_command = table.concat({
+      'EXA_COLORS="da=32"; exa ',
+      '-a ',
+      '--color=always ',
+      '-T ',
+      '--level=3 ',
+      '--icons ',
+      '--git-ignore ',
+      '--long ',
+      '--no-permissions ',
+      '--no-user ',
+      '--no-filesize ',
+      '--git ',
+      '--ignore-glob=.git',
+    })
+  }
+
+  if vim.g.is_windows then
+    local WSL_HOME = os.getenv("WSL_HOME")
+    local wcder_opts = {
+      entry_maker = function(line)
+        return {
+          value = line,
+          display = function(entry)
+            return ' ' .. line:gsub(HOME .. '\\', ''):gsub("\\", "/"),
+              { { { 1, 3 }, 'Directory' } }
+          end,
+          ordinal = line,
+        }
       end,
+      entry_value_fn = function(entry_value)
+        local unix_path = entry_value:gsub("C:\\", "/mnt/c/"):gsub("\\", "/")
+        return '"'..unix_path..'"'
+      end,
+    }
+
+    cder_opts = vim.tbl_deep_extend("force", cder_opts, wcder_opts)
+  end
+
+
+  return cder_opts
+end
+
+
+M.telescope = function()
+  local cder_opts = get_cder_opts()
+  return {
+    extensions = {
+      cder = cder_opts,
+    },
+    defaults = {
+      mappings = {
+        n = {
+          ["dd"] = function(pickerOpts)
+            local actions = require('telescope.actions')
+            actions.delete_buffer(pickerOpts)
+          end,
+        },
       },
     },
-  },
-  -- extensions_list = { "themes", "terms", "projections" },
-}
+    -- extensions_list = { "themes", "terms", "projections" },
+  }
+end
+
 
 return M
