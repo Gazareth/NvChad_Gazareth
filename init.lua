@@ -1,6 +1,7 @@
 -- local autocmd = vim.api.nvim_create_autocmd
 require "custom.neovide"
 
+local final_opts = {}
 local options  = {
   guicursor = "i:ver35-blinkwait1-blinkoff600-blinkon600-InsertModeCursor,v:block-blinkwait1-blinkoff200-blinkon1000-VisualModeCursor",
 
@@ -25,18 +26,39 @@ local options  = {
   -- opt.listchars:append "eol:↴"
 }
 
--- Set all options
-for k,v in pairs(options) do
-  vim.opt[k] = v
-end
 
 -- Is windows?
 vim.g.is_windows = vim.fn.has("win32") == 1 or vim.fn.has("win32unix") == 1
 
--- Set shell to powershell if on windowsM.path_separator = "/"
+-- Set shell to bash or powershell
 if vim.g.is_windows then
-  vim.opt.shell = "powershell -NoLogo -ExecutionPolicy RemoteSigned"
+  local woptions = {}
+
+  -- USE BASH! (WSL)
+  if true then
+    woptions = { shell = "bash" }
+  else
+    woptions = {
+      shell = "powershell",
+      shellquote = "shellpipe=| shellxquote=",
+      shellcmdflag = "-NoLogo -ExecutionPolicy RemoteSigned",
+      shellredir = "| Out-File -Encoding UTF8",
+    }
+  end
+  final_opts = vim.tbl_extend("force", options, woptions)
 end
+
+-- Set all options
+for k,v in pairs(final_opts) do
+  vim.opt[k] = v
+end
+
+-- Highlight yanked text for a brief period after yanking
+vim.api.nvim_create_autocmd({ "TextYankPost" }, {
+  callback = function()
+    vim.highlight.on_yank { higroup = "YankHighlight", timeout = 375 }
+  end,
+})
 
 -- Generic string split (courtesy of https://www.reddit.com/r/neovim/comments/su0em7/pathjoin_for_lua_or_vimscript_do_we_have_anything/)
 local split = function(inputString, sep)
@@ -76,35 +98,34 @@ local getOSConfig = function()
   return { pathSeparator = pathSeparator, configRoot = configRoot }
 end
 
--- Set up a usercommand to open keyboard shortcuts
-vim.api.nvim_create_user_command("EditKeyMappings", function()
+local open_config_files = function(left_rel_path, right_rel_path)
   local OSCfg = getOSConfig()
-  local coreMappingsPath = getConfigFilePath(OSCfg.configRoot, "lua\\core\\mappings.lua", OSCfg.pathSeparator)
-  local customMappingsPath = getConfigFilePath(OSCfg.configRoot, "lua\\custom\\mappings.lua", OSCfg.pathSeparator)
+  local left_full_path = getConfigFilePath(OSCfg.configRoot, left_rel_path, OSCfg.pathSeparator)
+  local right_full_path = getConfigFilePath(OSCfg.configRoot, right_rel_path, OSCfg.pathSeparator)
 
-  vim.cmd("tabnew "..coreMappingsPath.." | vsp "..customMappingsPath)
-end, {})
+  vim.cmd("tabnew "..left_full_path.." | vsp "..right_full_path)
+end
 
-vim.api.nvim_create_user_command("EditInstalledPlugins", function()
-  local OSCfg = getOSConfig()
-  local corePluginsPath = getConfigFilePath(OSCfg.configRoot, "lua\\plugins\\init.lua", OSCfg.pathSeparator)
-  local customPluginsPath = getConfigFilePath(OSCfg.configRoot, "lua\\custom\\plugins\\init.lua", OSCfg.pathSeparator)
+local config_commands = {
+  ["EditCustomDashboard"] = {
+    "lua\\plugins\\configs\\alpha.lua", "lua\\custom\\plugins\\overrides\\alpha.lua"
+  },
+  ["EditKeyMappings"] = {
+    "lua\\core\\mappings.lua", "lua\\custom\\mappings.lua"
+  },
+  ["EditInstalledPlugins"] = {
+    "lua\\plugins\\init.lua", "lua\\custom\\plugins\\init.lua"
+  },
+  ["EditCustomOptions"] = {
+    "lua\\core\\options.lua", "lua\\custom\\init.lua"
+  },
+}
 
-  vim.cmd("tabnew "..corePluginsPath.." | vsp "..customPluginsPath)
-end, {})
+-- Create commands for above configs
+for k,v in pairs(config_commands) do
+  vim.api.nvim_create_user_command(k, function()
+    open_config_files(v[1], v[2])
+  end, {})
+end
 
-vim.api.nvim_create_user_command("EditCustomOptions", function()
-  local OSCfg = getOSConfig()
-  local corePluginsPath = getConfigFilePath(OSCfg.configRoot, "lua\\core\\options.lua", OSCfg.pathSeparator)
-  local customPluginsPath = getConfigFilePath(OSCfg.configRoot, "lua\\custom\\init.lua", OSCfg.pathSeparator)
-
-  vim.cmd("tabnew "..corePluginsPath.." | vsp "..customPluginsPath)
-end, {})
-
--- Highlight yanked text
-vim.api.nvim_create_autocmd({ "TextYankPost" }, {
-   callback = function()
-      vim.highlight.on_yank { higroup = "YankHighlight", timeout = 375 }
-   end,
-})
 
