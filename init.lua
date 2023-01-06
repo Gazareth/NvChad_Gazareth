@@ -16,6 +16,7 @@ local options  = {
   autoread = true,
 
   incsearch = true,
+  inccommand = "nosplit",
 
   scrolloff = 1,
   sidescrolloff = 5,
