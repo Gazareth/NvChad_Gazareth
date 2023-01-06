@@ -83,9 +83,20 @@ return {
   },
 
   ["zane-/cder.nvim"] = {
+    cmd = "Telescope cder",
     after = "telescope.nvim",
     config = function()
       require('telescope').load_extension('cder')
+    end
+  },
+
+  ["LukasPietzschmann/telescope-tabs"] = {
+    requires = 'nvim-telescope/telescope.nvim',
+    config = function()
+      require'telescope-tabs'.setup{
+        close_tab_shortcut_i = '<C-d>', -- if you're in insert mode
+        close_tab_shortcut_n = 'dd',     -- if you're in normal mode
+      }
     end
   },
 
@@ -207,6 +218,9 @@ return {
       require "custom.plugins.configs.null-ls"
     end,
   },
+
+  ["eandrju/cellular-automaton.nvim"] = {},
+
   -- remove plugin
   -- ["hrsh7th/cmp-path"] = false,
 }
