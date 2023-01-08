@@ -43,7 +43,13 @@ end, {})
 vim.api.nvim_create_autocmd({ 'VimLeavePre' }, {
   callback = function()
     local Session = require("projections.session")
-    Session.store(vim.loop.cwd())
+    local buflist = vim.api.nvim_list_bufs();
+    if #buflist > 1 then
+      local current_type = vim.bo.filetype
+      if current_type ~= "alpha" and #current_type ~= 0 then
+        Session.store(vim.loop.cwd())
+      end
+    end
   end,
 })
 
