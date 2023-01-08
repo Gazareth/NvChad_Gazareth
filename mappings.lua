@@ -36,6 +36,19 @@ local explore_current_file_dir = function()
   end
 end
 
+local return_to_dashboard = function(set_cd)
+  return function()
+    vim.cmd "tabonly | enew | BufOnly"
+    vim.cmd "Alpha"
+    if set_cd then
+      local current_type = vim.bo.filetype
+      if current_type ~= "alpha" and #current_type ~= 0 then
+        vim.cmd "CdHome"
+      end
+    end
+  end
+end
+
 M.general = {
   n = {
     -- Meta stuff
@@ -53,6 +66,8 @@ M.general = {
     [";"] = { ":", "command mode", opts = { nowait = true } },
 
     ["ZW"] = { "<cmd> wa <CR>", "Save all files" },
+    ["ZD"] = { return_to_dashboard(false), "Return to project dashboard" },
+    ["ZDQ"] = { return_to_dashboard(true), "Return to dashboard" },
     ["ZA"] = { "<cmd> wa | qa <CR>", "Save all files then quit vim" },
 
     -- Tab/window switching
@@ -90,7 +105,7 @@ M.general = {
   i = {
     ["="] = { " = ", "spaced equals" },
     [">="] = { " >= ", "spaced greater than or equal to" },
-    ["<="] = { " >= ", "spaced less than or equal to" },
+    ["<="] = { " <= ", "spaced less than or equal to" },
     ["=="] = { " == ", "spaced equality" },
     ["=>"] = { " => ", "spaced arrow operator" },
     ["{<space>"] = { "{  }<left><left>", "spaced curly braces" },
@@ -156,8 +171,8 @@ M.nvimtree = {
 
 M.cellular_automation = {
   n = {
-    ["<leader>fml"] = {"<cmd>CellularAutomaton make_it_rain<CR>", "Make it rain (FML)" }
-  }
+    ["<leader>fml"] = { "<cmd>CellularAutomaton make_it_rain<CR>", "Make it rain (FML)" },
+  },
 }
 
 M.tabufline = {
