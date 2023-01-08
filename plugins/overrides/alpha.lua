@@ -30,6 +30,34 @@ local function button(sc, txt, keybind)
   }
 end
 
+-- Disable statusline in dashboard
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "alpha",
+  callback = function()
+    -- store initial statusline value to be used later
+    if type(vim.g.nvchad_vim_laststatus) == "nil" then
+      vim.g.nvchad_vim_laststatus = vim.opt.laststatus._value
+    end
+
+    -- Remove statusline since we have just loaded into an "alpha" filetype (i.e. dashboard)
+    vim.opt.laststatus = 0
+
+    vim.api.nvim_create_autocmd({ "TabEnter", "BufLeave" }, {
+      callback = function()
+        local current_type = vim.bo.filetype
+        if current_type == "alpha" or #current_type == 0 then
+          -- Switched to alpha or unknown filetype
+          vim.opt.laststatus = 0
+        else
+          -- Switched to any other filetype
+          vim.opt.laststatus = vim.g.nvchad_vim_laststatus
+        end
+      end
+    })
+
+  end,
+})
+
 return {
   headerPaddingBottom = { type = "padding", val = 4 },
   buttons = {
@@ -44,9 +72,9 @@ return {
       -- button("SPC b m", "  Bookmarks  ", ":Telescope marks<CR>"),
       button("SPC t h", "  Themes  ", ":Telescope themes<CR>"),
       -- button("SPC e s", "⌨  Keyboard Mappings", ":e stdpath('config') . '/custom/mappings.lua' | :noautocmd lcd %:p:h <CR>"),
-      button("SPC e k", "  Keyboard Mappings", ":EditKeyMappings <CR>"),
       button("SPC t k", "  Command Lookup", ":Telescope keymaps <CR>"),
 
+      button("SPC e k", "  Keyboard Mappings", ":EditKeyMappings <CR>"),
       button("SPC e o", "  Set Options", ":EditCustomOptions <CR>"),
       button("SPC e d", "舘 Configure Dashboard", ":EditCustomDashboard <CR>"),
       button("SPC e p", "  Configure Plugins", ":EditInstalledPlugins <CR>"),
