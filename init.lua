@@ -38,7 +38,7 @@ if vim.g.is_windows then
 
   -- USE BASH! (WSL)
   if true then
-    woptions = { shell = "bash" }
+    woptions = { shell = "bash", shellcmdflag = "-c" }
   else
     woptions = {
       shell = "powershell",

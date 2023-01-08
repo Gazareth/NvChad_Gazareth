@@ -22,15 +22,15 @@ local switch_window = function(command)
 end
 
 local current_file_dir = function()
-  return vim.fn.expand "%:p:h"
+  return (vim.fn.expand "%:p:h")
 end
 
 local explore_current_file_dir = function()
   if vim.g.is_windows then
-    local command = '!explorer.exe "' .. current_file_dir() .. '"'
-    print(command)
+    local escaped_file_path = current_file_dir():gsub("\\", "\\\\")
+    local command = '!"explorer.exe \'' .. escaped_file_path .. "'\""
+    vim.fn.setreg("*", command)
     vim.cmd(command)
-    -- vim.cmd('!explorer.exe "'..current_file_dir():gsub("\\", "\\\\")..'"')
   else
     vim.cmd("open " .. current_file_dir())
   end
