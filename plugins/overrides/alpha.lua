@@ -30,6 +30,17 @@ local function button(sc, txt, keybind)
   }
 end
 
+local set_show_status_line = function()
+  local current_type = vim.bo.filetype
+  if current_type == "alpha" or #current_type == 0 then
+    -- Switched to alpha or unknown filetype
+    vim.opt.laststatus = 0
+  else
+    -- Switched to any other filetype
+    vim.opt.laststatus = vim.g.nvchad_vim_laststatus
+  end
+end
+
 -- Disable statusline in dashboard
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "alpha",
@@ -44,14 +55,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
     vim.api.nvim_create_autocmd({ "TabEnter", "BufLeave" }, {
       callback = function()
-        local current_type = vim.bo.filetype
-        if current_type == "alpha" or #current_type == 0 then
-          -- Switched to alpha or unknown filetype
-          vim.opt.laststatus = 0
-        else
-          -- Switched to any other filetype
-          vim.opt.laststatus = vim.g.nvchad_vim_laststatus
-        end
+        vim.defer_fn(set_show_status_line, 100)
       end
     })
 
@@ -72,7 +76,7 @@ return {
       -- button("SPC b m", "  Bookmarks  ", ":Telescope marks<CR>"),
       button("SPC t h", "  Themes  ", ":Telescope themes<CR>"),
       -- button("SPC e s", "⌨  Keyboard Mappings", ":e stdpath('config') . '/custom/mappings.lua' | :noautocmd lcd %:p:h <CR>"),
-      button("SPC t k", "  Command Lookup", ":Telescope keymaps <CR>"),
+      button("SPC t k", "  Keymap Lookup", ":Telescope keymaps <CR>"),
 
       button("SPC e k", "  Keyboard Mappings", ":EditKeyMappings <CR>"),
       button("SPC e o", "  Set Options", ":EditCustomOptions <CR>"),
