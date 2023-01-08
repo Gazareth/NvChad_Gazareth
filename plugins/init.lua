@@ -91,7 +91,8 @@ return {
   },
 
   ["LukasPietzschmann/telescope-tabs"] = {
-    requires = 'nvim-telescope/telescope.nvim',
+    requires = { "nvim-telescope/telescope.nvim" },
+        after = "telescope.nvim",
     config = function()
       require'telescope-tabs'.setup{
         close_tab_shortcut_i = '<C-d>', -- if you're in insert mode
