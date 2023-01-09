@@ -1,5 +1,20 @@
 local overrides = require "custom.plugins.overrides"
 
+local project_name_display = function()
+  local projections_available, Session = pcall(require, "projections.session")
+  if projections_available then
+    local info = Session.info(vim.loop.cwd())
+    if info ~= nil then
+      -- local session_file_path = tostring(info.path)
+      -- local project_workspace_patterns = info.project.workspace.patterns
+      -- local project_workspace_path = tostring(info.project.workspace)
+      local project_path = vim.fn.pathshorten(info.project.workspace.path.path, 3)
+      return project_path
+    end
+  end
+  return vim.fs.basename(vim.loop.cwd())
+end
+
 return {
 
   -- OVERRIDES --
@@ -17,6 +32,33 @@ return {
       end
 
     end
+  },
+
+  ["NvChad/ui"] = {
+    override_options = {
+      statusline = {
+        overriden_modules = function()
+          local st_modules = require "nvchad_ui.statusline.modules"
+          local project_indicator = ""
+          local project_name = project_name_display()
+          if #project_name then
+            project_indicator = "%#St_gitIcons#" .. "[Project: "..project_name.."] "
+          end
+          local sep_style = vim.g.statusline_sep_style
+          local separators = (type(sep_style) == "table" and sep_style) or require("nvchad_ui.icons").statusline_separators[sep_style]
+          local sep_l = separators["left"]
+          local dir_icon = "%#St_cwd_icon#" .. " "
+          local dir_name = "%#St_cwd_text#" .. " " .. vim.fn.fnamemodify(vim.fn.getcwd(), ":t") .. " " 
+          local expr = (vim.o.columns > 85 and ("%#St_cwd_sep#" .. sep_l .. dir_icon .. dir_name .. project_indicator)) or ""
+          return {
+            cwd = function()
+              -- return project_name .. st_modules.cwd()
+              return expr
+            end,
+          }
+        end,
+      },
+    },
   },
 
   ["lewis6991/gitsigns.nvim"] = {
@@ -92,7 +134,7 @@ return {
 
   ["LukasPietzschmann/telescope-tabs"] = {
     requires = { "nvim-telescope/telescope.nvim" },
-        after = "telescope.nvim",
+    after = "telescope.nvim",
     config = function()
       require'telescope-tabs'.setup{
         close_tab_shortcut_i = '<C-d>', -- if you're in insert mode
