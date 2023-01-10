@@ -8,7 +8,8 @@ local project_name_display = function()
       -- local session_file_path = tostring(info.path)
       -- local project_workspace_patterns = info.project.workspace.patterns
       -- local project_workspace_path = tostring(info.project.workspace)
-      local project_path = vim.fn.pathshorten(info.project.workspace.path.path, 3)
+      -- local project_path = vim.fn.pathshorten(info.project.workspace.path.path, 3)
+      local project_path = info.project.workspace.path.path
       return project_path
     end
   end
@@ -38,23 +39,65 @@ return {
     override_options = {
       statusline = {
         overriden_modules = function()
-          local st_modules = require "nvchad_ui.statusline.modules"
-          local project_indicator = ""
-          local project_name = project_name_display()
-          if #project_name then
-            project_indicator = "%#St_gitIcons#" .. "[Project: "..project_name.."] "
-          end
+          -- Common stuff
           local sep_style = vim.g.statusline_sep_style
           local separators = (type(sep_style) == "table" and sep_style) or require("nvchad_ui.icons").statusline_separators[sep_style]
           local sep_l = separators["left"]
+          local sep_r = separators["right"]
+          local fn = vim.fn
+          -- FILENAME
+          local fileicon = " "
+          local filename = (fn.expand "%" == "" and "Empty ") or fn.expand "%:t"
+          local foldername = filename and fn.expand("%:.:h"):gsub("\\", "/")
+
+          if filename ~= "Empty" then
+            local devicons_present, devicons = pcall(require, "nvim-web-devicons")
+
+            if devicons_present then
+              local ft_icon = devicons.get_icon(filename)
+              fileicon = (ft_icon ~= nil and ft_icon) or ""
+            end
+
+            filename = " " .. filename .. " "
+          end
+
+          local file_name = fileicon .. filename
+          local folder_info = " " .. foldername
+          local file_path_seps = "%%#St_folder_chevs#" .. "  " .. "%%#St_file_folder_info#"
+          folder_info = folder_info:gsub("/", file_path_seps)
+          local folder_portion = "%#St_file_folder_info#" .. folder_info .. " " .. "%#St_folder_sep#" .. sep_r
+          local file_portion = "%#St_file_info#" .. file_name .. "%#St_file_sep#" .. sep_r .. "%#St_file_git_sep#" .. sep_r
+          local file_info = folder_portion .. file_portion
+
+          -- CWD
+          local project_indicator = ""
+          local project_name = project_name_display()
+          if #project_name then
+            project_indicator = "%#St_cwd_project#" .. "["..project_name .. "] "
+          end
+
           local dir_icon = "%#St_cwd_icon#" .. " "
-          local dir_name = "%#St_cwd_text#" .. " " .. vim.fn.fnamemodify(vim.fn.getcwd(), ":t") .. " " 
-          local expr = (vim.o.columns > 85 and ("%#St_cwd_sep#" .. sep_l .. dir_icon .. dir_name .. project_indicator)) or ""
+          local dir_name = "%#St_cwd_text#" .. " " .. fn.fnamemodify(fn.getcwd(), ":t") .. " "
+
+          local cwd_expr = (vim.o.columns > 85 and ("%#St_cwd_sep#" .. sep_l .. dir_icon .. dir_name .. project_indicator)) or ""
+
+          -- LSP
+          local lsp_status = "   LSP "
+          if rawget(vim, "lsp") then
+            for _, client in ipairs(vim.lsp.get_active_clients()) do
+              if client.attached_buffers[vim.api.nvim_get_current_buf()] then
+                local enough_cols = vim.o.columns > 1
+                local lsp_prefix = "   LSP: "
+                local lsp_client = client.name
+                lsp_status = (enough_cols and "%#St_LspStatus#" .. lsp_prefix .. "%#St_LspAttachedName#" .. lsp_client .. " ") or lsp_status
+              end
+            end
+          end
+
           return {
-            cwd = function()
-              -- return project_name .. st_modules.cwd()
-              return expr
-            end,
+            fileInfo = function() return file_info end,
+            LSP_status = function() return lsp_status end,
+            cwd = function() return cwd_expr end,
           }
         end,
       },

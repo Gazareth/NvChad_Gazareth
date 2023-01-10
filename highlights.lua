@@ -75,6 +75,20 @@ M.override = {
   St_SelectModeSep = {
     fg = "dark_purple",
   },
+
+  St_EmptySpace = {
+    bg = "one_bg2",
+  },
+
+  St_file_info = {
+    bg = "one_bg",
+    bold = true
+  },
+
+  St_file_sep = {
+    fg = "one_bg",
+    bg = "black2",
+  }
 }
 
 local searchHighlight = function(isCurrent)
@@ -92,6 +106,34 @@ end
 M.add = {
   -- NvimTreeOpenedFolderName = { fg = "blue", bold = true },
   -- NvimTreeOpenedFile = { fg = "teal", bold = true, italic = true },
+  St_file_folder_info = {
+    fg = "white",
+    bg = "one_bg2",
+    -- bold = true
+  },
+  St_folder_chevs = {
+    fg = "#cfcfcd",
+    bg = "one_bg2",
+    bold = true,
+  },
+  St_folder_sep = {
+    fg = "one_bg2",
+    bg = "one_bg",
+  },
+  St_file_git_sep = {
+    fg = "black2",
+    bg = "statusline_bg",
+  },
+  St_LspAttachedName = {
+    fg = "blue",
+    bold = true,
+  },
+  St_cwd_project = {
+    fg = "#989896",
+    bg = "lightbg",
+    -- bold = true
+    -- italic = true
+  },
   CurSearch = searchHighlight(true),
   IncSearch = searchHighlight(true),
   Search = searchHighlight(false),
