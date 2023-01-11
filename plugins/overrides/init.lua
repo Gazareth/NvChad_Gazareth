@@ -150,4 +150,6 @@ M.telescope = function()
   }
 end
 
+M.ui = require "custom.plugins.overrides.ui"
+
 return M
