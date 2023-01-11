@@ -83,6 +83,8 @@ M.general = {
     ["Y"] = { "^vg_", "select line (excluding EOL character)" },
     ["<leader><enter>"] = { ":call feedkeys('] [ i')<cr>", "Insert mode with new line above and below." },
 
+    ["]d"] = { function() vim.diagnostic.goto_next() end, "Go to next diagnostic issue" },
+    ["[d"] = { function() vim.diagnostic.goto_prev() end, "Go to previous diagnostic issue" },
     -- Print out current mode on a delay (for debugging)
     -- ["<leader>m"] = { function()
     --   local timer = vim.loop.new_timer()
