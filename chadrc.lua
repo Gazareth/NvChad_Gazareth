@@ -18,9 +18,6 @@ M.ui = {
 
 M.plugins = require "custom.plugins"
 
--- require('telescope').load_extension('projects')
--- require'telescope'.extensions.projects.projects{}
-
 -- check core.mappings for table structure
 M.mappings = require "custom.mappings"
 
