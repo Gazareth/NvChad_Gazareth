@@ -1,12 +1,16 @@
 local M = {}
 
 M.disabled = {
+  t = {
+    ["<A-h>"] = { "", "toggle floating term" },
+  },
   n = {
     ["<leader>fm"] = { "", "lsp formatting" },
     ["<leader>n"] = { "", "toggle line number" },
     ["<leader>rn"] = { "", "toggle relative number" },
     ["<C-n>"] = { "", "toggle nvimtree" },
     ["<leader>e"] = { "", "focus nvimtree" },
+    ["<A-h>"] = { "", "toggle floating term" },
   },
 }
 
@@ -148,6 +152,22 @@ end
 
 setLeapKeymaps()
 
+M.leap_ast = {
+  [{'n', 'x', 'o'}] =  { ["<A-n>"]  =  { function() require("leap-ast").leap() end, "Leap: AST node" }},
+}
+
+M.cellular_automation = {
+  n = {
+    ["<leader>fml"] = { "<cmd>CellularAutomaton make_it_rain<CR>", "Make it rain (FML)" },
+  },
+}
+
+M.focus = {
+  n = {
+    ["<F3>"] = { "<cmd> FocusMaximise <CR>", "Focus current window" },
+  },
+}
+
 M.lspconfig = {
   n = {
     ["<leader>fmt"] = {
@@ -171,12 +191,6 @@ M.nvimtree = {
   },
 }
 
-M.cellular_automation = {
-  n = {
-    ["<leader>fml"] = { "<cmd>CellularAutomaton make_it_rain<CR>", "Make it rain (FML)" },
-  },
-}
-
 M.tabufline = {
   n = {
     -- cycle through buffers
@@ -195,18 +209,38 @@ M.tabufline = {
   },
 }
 
-M.focus = {
-  n = {
-    ["<F3>"] = { "<cmd> FocusMaximise <CR>", "Focus current window" },
-  },
-}
-
 M.telescope = {
   n = {
     ["<leader>fp"] = { "<cmd> Telescope projections <CR>", "find projects" },
     ["<leader><C-t>"] = { "<cmd> Telescope telescope-tabs list_tabs <CR>", "Browse tabs" },
   },
 }
+
+local tcpresent, tree_climber = pcall(require, "tree-climber")
+if tcpresent then
+  local tc_func = function(func_name, opts)
+    return function() return tree_climber[func_name](opts) end
+  end
+  local tc_highlight = function(func_name) return tc_func(func_name, { highlight = true, skip_comments = true }) end
+  local tc_skipcomments = function(func_name) return tc_func(func_name, { skip_comments = true }) end
+
+  M.tree_climber = {
+    [{"n", "v", "o"}] = {
+      ["<A-k>"] = { tc_highlight("goto_parent"), "Go to parent Treesitter node" },
+      ["<A-j>"] = { tc_highlight("goto_child"), "Go to child Treesitter node" },
+      ["<A-l>"] = { tc_skipcomments("goto_next"), "Go to next Treesitter node" },
+      ["<A-h>"] = { tc_skipcomments("goto_prev"), "Go to previous Treesitter node" },
+    },
+    [{"v", "o"}] = {
+      ["ie"] = { tree_climber.select_node, "Select inside treesitter node" },
+    },
+    ["n"] = {
+      ["<C-l>"] = { tree_climber.swap_next, "Swap with next Treesitter node" },
+      ["<C-h>"] = { tree_climber.swap_prev, "Swap with previous Treesitter node" },
+      ["<C-H>"] = { tree_climber.highlight_node, "Highlight Treesitter node" },
+    }
+  }
+end
 
 M.trouble = {
   n = {
