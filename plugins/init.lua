@@ -188,17 +188,59 @@ return {
       vim.keymap.set("x", "s", "<cmd>lua require('substitute').visual()<cr>", { desc = "Substitute (Visual selection)" ,noremap = true })
     end
   },
+
   ["tommcdo/vim-exchange"] = {},
   ["ggandor/leap.nvim"] = {},
+  ["ggandor/leap-ast.nvim"] = {
+   after = { "leap.nvim", "nvim-treesitter" }
+  },
   ["tpope/vim-fugitive"] = {},
   ["tpope/vim-abolish"] = {},
   ["tpope/vim-repeat"] = {},
-  ["tpope/vim-surround"] = {},
+  -- ["tpope/vim-surround"] = {},
   ["tpope/vim-unimpaired"] = {},
   ["wellle/targets.vim"] = {},
   ["gbprod/stay-in-place.nvim"] = {},
   ["iago-lito/vim-visualMarks"] = {},
   ["AndrewRadev/tagalong.vim"] = {},
+
+  ["kylechui/nvim-surround"] = {
+    config = function()
+      require("nvim-surround").setup()
+    end
+  },
+  ["andymass/vim-matchup"] = {},
+
+  ["drybalka/tree-climber.nvim"] = {},
+  ["nvim-treesitter/nvim-treesitter-textobjects"] = {
+    after = "nvim-treesitter",
+    config = function()
+      require("nvim-treesitter.configs").setup({
+      textobjects = {
+        select = {
+          enable = true,
+          keymaps = {
+            ["af"] = { query = "@function.outer", desc = "Select around function" },
+            ["if"] = { query = "@function.inner", desc = "Select inner function" },
+            ["ac"] = { query = "@class.outer", desc = "Select around class" },
+            ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+          },
+        }
+      }
+    })
+    end
+  },
+  -- ["rktjmp/lush.nvim"] = {},
+  -- ["Dkendal/nvim-treeclimber"] = {
+  --   requires = { "nvim-treesitter/nvim-treesitter", "rktjmp/lush.nvim" },
+  --   after = "ui",
+  --   config = function()
+  --     local present, treeclimber = pcall(require, "lush")
+  --     if(present) then
+  --       require('nvim-treeclimber').setup()
+  --     end
+  --   end
+  -- },
 
   ["mg979/vim-visual-multi"] = {
     config = function()
@@ -218,13 +260,21 @@ return {
     end
   },
 
+  -- ["williamboman/mason-lspconfig.nvim"] = {
+  --   setup = {
+  --     ensure_installed = {
+  --       "sumneko_lua",
+  --     }
+  --   }
+  -- },
+
   -- code formatting, linting etc
-  ["jose-elias-alvarez/null-ls.nvim"] = {
-    after = "nvim-lspconfig",
-    config = function()
-      require "custom.plugins.configs.null-ls"
-    end,
-  },
+  -- ["jose-elias-alvarez/null-ls.nvim"] = {
+  --   after = "nvim-lspconfig",
+  --   config = function()
+  --     require "custom.plugins.configs.null-ls"
+  --   end,
+  -- },
 
   ["eandrju/cellular-automaton.nvim"] = {},
 
