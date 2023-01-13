@@ -14,9 +14,11 @@ local project_name_display = function()
   return vim.fs.basename(vim.loop.cwd())
 end
 
-
-
-
+-- This provides additional information in the statusbar, such as:
+--  - Setting the filename to bold and adding [+] when there are unsaved changes
+--  - Showing the current folder path with breadcrumbs from the project root (cd)
+--  - Distinguish the current LSP from the "LSP: " text
+--  - Show full path to current project dir
 return {
   statusline = {
     overriden_modules = function()
@@ -45,7 +47,7 @@ return {
 
       local file_name = fileicon .. filename
       local file_path_seps = "%%#St_folder_chevs#" .. "  " .. "%%#St_folder_head#"
-      local folder_info = " " .. "%#St_folder_head#" .. " " .. foldername_head .. "%#St_file_folder_info#" .. foldername_tail .. " "
+      local folder_info = " " .. "%#St_folder_head#" .. foldername_head .. "%#St_file_folder_info#" .. " " .. foldername_tail .. " "
       folder_info = folder_info:gsub("/", file_path_seps)
       -- local file_portion = "%#St_file_info#" .. file_name .. " " .. "%#St_file_sep#" .. sep_r .. "%#St_file_git_sep#" .. sep_r
       local file_color = "%#" .. ((vim.bo.modified and "St_file_modified") or "St_file_info") .. "#"
