@@ -1,4 +1,5 @@
 local overrides = require "custom.plugins.overrides"
+local get_keys = require("custom.functions.packer").get_keys
 
 
 return {
@@ -247,7 +248,16 @@ return {
       require "custom.plugins.configs.vim-visual-multi"
     end
   },
-  ["bkad/CamelCaseMotion"] = {},
+  ["chaoren/vim-wordmotion"] = {
+  -- @todo: Replace syntax once https://github.com/wbthomason/packer.nvim/pull/1063 has been merged
+    keys = vim.list_extend(
+      get_keys({"n", "x", "o"} ,{{"w", "b", "e", "ge" } }),
+      get_keys({"x", "o"}, {{"a", "i"}, {"w"}})
+    ),
+    setup = function()
+      vim.g.wordmotion_nomap = 1
+    end
+  },
   ["RRethy/vim-illuminate"] = {},
   ["folke/trouble.nvim"] = {
     requires = "kyazdani42/nvim-web-devicons",
