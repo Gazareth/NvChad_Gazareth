@@ -1,6 +1,9 @@
 local overrides = require "custom.plugins.overrides"
 local get_keys = require("custom.functions.packer").get_keys
 
+vim.g.GARTEST = function()
+  return 
+end
 
 return {
 
@@ -30,7 +33,7 @@ return {
 
   ["nvim-telescope/telescope.nvim"] = {
     rm_default_opts = true,
-    after = "plenary.nvim",
+    requires = "nvim-lua/plenary.nvim",
     config = function()
       require "plugins.configs.telescope"
     end,
@@ -81,7 +84,6 @@ return {
   ["nathom/filetype.nvim"] = {},
 
   ["mbbill/undotree"] = {},
-  ["Asheq/close-buffers.vim"] = {},
   ["gnikdroy/projections.nvim"] = {
     after = "telescope.nvim",
     config = function()
@@ -90,23 +92,22 @@ return {
   },
 
   ["zane-/cder.nvim"] = {
-    cmd = "Telescope cder",
     after = "telescope.nvim",
     config = function()
       require('telescope').load_extension('cder')
     end
   },
 
-  ["LukasPietzschmann/telescope-tabs"] = {
-    requires = { "nvim-telescope/telescope.nvim" },
-    after = "telescope.nvim",
-    config = function()
-      require'telescope-tabs'.setup{
-        close_tab_shortcut_i = '<C-d>', -- if you're in insert mode
-        close_tab_shortcut_n = 'dd',     -- if you're in normal mode
-      }
-    end
-  },
+  -- ["LukasPietzschmann/telescope-tabs"] = {
+  --   requires = { "nvim-telescope/telescope.nvim" },
+  --   after = "telescope.nvim",
+  --   config = function()
+  --     require'telescope-tabs'.setup{
+  --       close_tab_shortcut_i = '<C-d>', -- if you're in insert mode
+  --       close_tab_shortcut_n = 'dd',     -- if you're in normal mode
+  --     }
+  --   end
+  -- },
 
   ["nvim-telescope/telescope-ui-select.nvim"] = {
     after = "telescope.nvim",
@@ -172,7 +173,8 @@ return {
   },
 
   ["ofirgall/open.nvim"] = {
-    requires = "nvim-lua/plenary.nvim",
+    -- after = "plenary.nvim", -- Not needed because we load late with "Keys"
+    keys = {"n","gx"},
     config = function()
       require("open").setup()
       vim.keymap.set('n', 'gx', require('open').open_cword)
@@ -191,7 +193,12 @@ return {
   },
 
   ["tommcdo/vim-exchange"] = {},
-  ["ggandor/leap.nvim"] = {},
+  ["ggandor/leap.nvim"] = {
+    keys = vim.list_extend(
+      get_keys({ "n", "x", "o" }, {{"-", "+", "gl"}}),
+      get_keys({"x", "o"}, {{ "g-", "g+" }})
+    )
+  },
   ["ggandor/leap-ast.nvim"] = {
    after = { "leap.nvim", "nvim-treesitter" }
   },
@@ -286,7 +293,9 @@ return {
   --   end,
   -- },
 
-  ["eandrju/cellular-automaton.nvim"] = {},
+  ["eandrju/cellular-automaton.nvim"] = {
+    cmd = "CellularAutomaton"
+  },
 
   -- remove plugin
   -- ["hrsh7th/cmp-path"] = false,
