@@ -54,6 +54,10 @@ local return_to_dashboard = function(set_cd)
 end
 
 M.general = {
+  [{"n", "i"}] = {
+    ["<C-Tab>"] = { "<cmd> tabnext <CR>", "Switch to next tab" },
+    ["<C-S-Tab>"] = { "<cmd> tabprev <CR>", "Switch to previous tab" },
+  },
   n = {
     -- Meta stuff
     ["<leader>ps"] = { "<cmd> PackerSync <CR>", "Sync packages" },
@@ -73,13 +77,12 @@ M.general = {
     ["ZD"] = { return_to_dashboard(false), "Return to project dashboard" },
     ["ZDQ"] = { return_to_dashboard(true), "Return to dashboard" },
     ["ZA"] = { "<cmd> wa | qa <CR>", "Save all files then quit vim" },
+    ["ZS"] = { "<cmd>so %<CR>", "Source current file" },
 
     -- Tab/window switching
     ["<C-w><C-v>"] = { "<cmd> :vert sb # <CR>", "Open a vertical split of current and previous buffer" },
     ["<C-w><C-t>"] = { "<cmd> tabc <CR>", "Close tab" },
     ["<C-t>"] = { "<cmd> tabnew | Alpha <CR>", "Open new tab and run Alpha (dashboard)" },
-    ["<C-Tab>"] = { "<cmd> tabnext <CR>", "Switch to next tab" },
-    ["<C-S-Tab>"] = { "<cmd> tabprev <CR>", "Switch to previous tab" },
     ["<TAB>"] = { switch_window "w", "Switch to next window" },
     ["<S-Tab>"] = { switch_window "W", "Switch to previous window" },
 
@@ -121,36 +124,21 @@ M.general = {
   v = {
     ["<leader>/sa"] = { 'y:%s/<C-R>"//g<left><left>', "Replace selection on all lines." },
     ["<leader>/sc"] = { 'y:%s/<C-R>"//gc<left><left><left>', "Replace selection on all lines (with confirmation)." },
-    ["<leader>/sl"] = { 'y:s/<C-R>"//g<left><left>', "Replace selection on current line." },
+    ["<leader>/sl"] = { 'y:s/<C-R>"//g<left><left>', "ReplaceDingo selection on current line." },
   },
 }
 
-vim.g.camelcasemotion_key = "<leader>"
-
-local setLeapKeymaps = function()
-  ---- Leap keymaps ----
-  for _, _1_ in ipairs {
-    { { "n", "x", "o" }, "-", "<Plug>(leap-forward-to)", "Leap: forward-to" },
-    { { "n", "x", "o" }, "+", "<Plug>(leap-backward-to)", "Leap: backward-to" },
-    { { "x", "o" }, "x", "<Plug>(leap-forward-till)", "Leap: forward-till" },
-    { { "x", "o" }, "X", "<Plug>(leap-backward-till)", "Leap: backward-till" },
-    { { "n", "x", "o" }, "gs", "<Plug>(leap-cross-window)", "Leap: cross-window" },
-  } do
-    local _each_2_ = _1_
-    local modes = _each_2_[1]
-    local lhs = _each_2_[2]
-    local rhs = _each_2_[3]
-    local desc = _each_2_[4]
-    for _0, mode in ipairs(modes) do
-      if force_3f or ((vim.fn.mapcheck(lhs, mode) == "") and (vim.fn.hasmapto(rhs, mode) == 0)) then
-        vim.keymap.set(mode, lhs, rhs, { silent = true, desc = desc })
-      else
-      end
-    end
-  end
-end
-
-setLeapKeymaps()
+M.leap = {
+  [{ "n", "x", "o" }] = {
+    ["-"] = { "<Plug>(leap-forward-to)", "Leap: forward-to" },
+    ["+"] = { "<Plug>(leap-backward-to)", "Leap: backward-to" },
+    ["gl"] = { "<Plug>(leap-cross-window)", "Leap: cross-window" },
+  },
+  [{"x", "o"}] = {
+    ["g-"] = { "<Plug>(leap-forward-till)", "Leap: forward-till" },
+    ["g+"] = { "<Plug>(leap-backward-till)", "Leap: backward-till" },
+  }
+}
 
 M.leap_ast = {
   [{'n', 'x', 'o'}] =  { ["<A-n>"]  =  { function() require("leap-ast").leap() end, "Leap: AST node" }},
@@ -213,6 +201,7 @@ M.telescope = {
   n = {
     ["<leader>fp"] = { "<cmd> Telescope projections <CR>", "find projects" },
     ["<leader><C-t>"] = { "<cmd> Telescope telescope-tabs list_tabs <CR>", "Browse tabs" },
+    ["<leader>cd"] = { "<cmd>Telescope cder<CR>", "Change current directory (cder)"}
   },
 }
 
@@ -246,6 +235,19 @@ M.trouble = {
   n = {
     ["<leader>tc"] = { "<cmd> TroubleToggle <CR>", "Toggle Trouble (Diagnostics)" },
   },
+}
+
+M.wordmotion = {
+  [{"n", "x", "o"}] = {
+    ["<A-w>"] = {"<Plug>WordMotion_w", "WordMotion: Move 1 word forwards."},
+    ["<A-b>"] = {"<Plug>WordMotion_b", "WordMotion: Move 1 word backwards."},
+    ["<A-e>"] = {"<Plug>WordMotion_e", "WordMotion: Move to next end of word."},
+    ["<A-g><A-e>"] = {"<Plug>WordMotion_ge", "WordMotion: Move to end of previous word."},
+  },
+  [{"x", "o"}] = {
+    ["<A-i><A-w>"] = { "<Plug>WordMotion_iw", "WordMotion: Inner word"},
+    ["<A-a><A-w>"] = { "<Plug>WordMotion_aw", "WordMotion: Around word"},
+  }
 }
 
 M.undoquit = {
