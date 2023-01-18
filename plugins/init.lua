@@ -1,9 +1,10 @@
 local overrides = require "custom.plugins.overrides"
 local get_keys = require("custom.functions.packer").get_keys
 
-vim.g.GARTEST = function()
-  return 
-end
+local allSurrounds = { "f", "t","[", "]", "{", "}", "(", ")", "\"", "'" }
+local allWordMotions = vim.list_extend({ "w", "W", "p", "q", "b" }, allSurrounds)
+local allVimCaserKeys = { "m", "p", "c", "_", "u", "U", "t", "s", "<space>", "-", "k", "K", "." }
+local allVimUnimpairedKeys = { "a", "A", "b", "B", "l", "L", "<C-L>", "q", "Q", "<C-Q>", "t", "T", "<C-T>", "f", "n", "<space>", "e", "x", "xx", "u", "uu", "y", "yy", "C", "CC"  }
 
 return {
 
@@ -131,6 +132,7 @@ return {
   },
 
   ["folke/zen-mode.nvim"] = {
+    cmd = { "ZenMode" },
     config = function()
       require("zen-mode").setup {
         window = {
@@ -140,14 +142,10 @@ return {
     end
   },
 
-  -- ["shortcuts/no-neck-pain.nvim"] = {},
-  ["folke/twilight.nvim"] = {},
+  ["folke/twilight.nvim"] = {
+    cmd = { "Twilight", "TwilightEnable", "TwilightDisable" }
+  },
 
-  -- ["roman/golden-ratio"] = {
-  --   config = function()
-  --     vim.g.golden_ratio_exclude_nonmodifiable = 1
-  --   end
-  -- },
   ["beauwilliams/focus.nvim"] = {
     config = function() require("focus").setup() end
   },
@@ -157,6 +155,7 @@ return {
   },
 
   ["AndrewRadev/undoquit.vim"] = {
+    cmd = "Undoquit",
     config = function()
       vim.g.undoquit_mapping = ""
       vim.g.undoquit_tab_mapping = ""
@@ -182,62 +181,103 @@ return {
   },
 
   ["gbprod/substitute.nvim"] = {
+    keys = vim.list_extend(
+      get_keys({"n"}, {{"s", "ss", "S"}}),
+      get_keys({"x"}, {{"s"}})
+    ),
     config = function()
-      require("substitute").setup()
-      -- Lua
-      vim.keymap.set("n", "s", "<cmd>lua require('substitute').operator()<cr>", { desc = "Substitute (With motion)" ,noremap = true })
-      vim.keymap.set("n", "ss", "<cmd>lua require('substitute').line()<cr>", { desc = "Substitute (Line)" ,noremap = true })
-      vim.keymap.set("n", "S", "<cmd>lua require('substitute').eol()<cr>", { desc = "Substitute (To end of line)" ,noremap = true })
-      vim.keymap.set("x", "s", "<cmd>lua require('substitute').visual()<cr>", { desc = "Substitute (Visual selection)" ,noremap = true })
+      local subst = require("substitute")
+      subst.setup()
+      vim.keymap.set("n", "s", subst.operator, { desc = "Substitute (With motion)" ,noremap = true })
+      vim.keymap.set("n", "ss", subst.line, { desc = "Substitute (Line)" ,noremap = true })
+      vim.keymap.set("n", "S", subst.eol, { desc = "Substitute (To end of line)" ,noremap = true })
+      vim.keymap.set("x", "s", subst.visual, { desc = "Substitute (Visual selection)" ,noremap = true })
     end
   },
 
-  ["tommcdo/vim-exchange"] = {},
-  ["ggandor/leap.nvim"] = {
+  ["tommcdo/vim-exchange"] = {
     keys = vim.list_extend(
-      get_keys({ "n", "x", "o" }, {{"-", "+", "gl"}}),
-      get_keys({"x", "o"}, {{ "g-", "g+" }})
+      get_keys({"n"}, {{"cx", "cxx", "cxc"}}),
+      get_keys({"x"}, {{"X"}})
     )
   },
+
+  ["ggandor/leap.nvim"] = {},
+
   ["ggandor/leap-ast.nvim"] = {
-   after = { "leap.nvim", "nvim-treesitter" }
+    after = { "leap.nvim", "nvim-treesitter" }
   },
-  ["tpope/vim-fugitive"] = {},
-  ["tpope/vim-abolish"] = {},
+
+  ["tpope/vim-fugitive"] = {
+    opt = true,
+    cmd = {
+      "G", "Git", "Gdiffsplit", "Gvdiffsplit", "Gedit", "Gsplit",
+      "Gread", "Gwrite", "Ggrep", "Glgrep", "Gmove",
+      "Gdelete", "Gremove", "Gbrowse",
+    },
+  },
+
+  ["arthurxavierx/vim-caser"] = {
+    keys = vim.list_extend(
+      vim.list_extend(
+        get_keys({"n"}, {{"gs"}, {"a", "i"}, allVimCaserKeys, allWordMotions}),
+        get_keys({"n"}, {{"gs"}, { "w", "W" }})
+      ),
+      get_keys({"x"}, {{"gs"}, {"w", "W"}})
+    )
+  },
+
   ["tpope/vim-repeat"] = {},
-  -- ["tpope/vim-surround"] = {},
-  ["tpope/vim-unimpaired"] = {},
+
+  ["tpope/vim-unimpaired"] = {
+    keys = vim.list_extend(
+      vim.list_extend(
+        get_keys({"n"}, {{"[", "]"}, allVimUnimpairedKeys}),
+        get_keys({"n"}, {{">", "<", "="}, {"p", "P"}})
+      ),
+      get_keys({"x"}, {{"[", "]"}, { "x", "u", "y", "c" }})
+    )
+  },
+
   ["wellle/targets.vim"] = {},
+
   ["gbprod/stay-in-place.nvim"] = {},
-  ["iago-lito/vim-visualMarks"] = {},
+
   ["AndrewRadev/tagalong.vim"] = {},
 
   ["kylechui/nvim-surround"] = {
+    keys = vim.list_extend(
+      get_keys({"n"}, {{ "y", "d", "c" }, {"s"}, allWordMotions}),
+      get_keys({"x"}, {{ "S" }, allSurrounds})
+    ),
     config = function()
       require("nvim-surround").setup()
     end
   },
+
   ["andymass/vim-matchup"] = {},
 
   ["drybalka/tree-climber.nvim"] = {},
+
   ["nvim-treesitter/nvim-treesitter-textobjects"] = {
     after = "nvim-treesitter",
     config = function()
       require("nvim-treesitter.configs").setup({
-      textobjects = {
-        select = {
-          enable = true,
-          keymaps = {
-            ["af"] = { query = "@function.outer", desc = "Select around function" },
-            ["if"] = { query = "@function.inner", desc = "Select inner function" },
-            ["ac"] = { query = "@class.outer", desc = "Select around class" },
-            ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
-          },
+        textobjects = {
+          select = {
+            enable = true,
+            keymaps = {
+              ["af"] = { query = "@function.outer", desc = "Select around function" },
+              ["if"] = { query = "@function.inner", desc = "Select inner function" },
+              ["ac"] = { query = "@class.outer", desc = "Select around class" },
+              ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+            },
+          }
         }
-      }
-    })
+      })
     end
   },
+
   -- ["rktjmp/lush.nvim"] = {},
   -- ["Dkendal/nvim-treeclimber"] = {
   --   requires = { "nvim-treesitter/nvim-treesitter", "rktjmp/lush.nvim" },
@@ -255,18 +295,11 @@ return {
       require "custom.plugins.configs.vim-visual-multi"
     end
   },
-  ["chaoren/vim-wordmotion"] = {
-  -- @todo: Replace syntax once https://github.com/wbthomason/packer.nvim/pull/1063 has been merged
-    keys = vim.list_extend(
-      get_keys({"n", "x", "o"} ,{{"w", "b", "e", "ge" } }),
-      get_keys({"x", "o"}, {{"a", "i"}, {"w"}})
-    ),
-    setup = function()
-      vim.g.wordmotion_nomap = 1
-    end
-  },
+
   ["RRethy/vim-illuminate"] = {},
+
   ["folke/trouble.nvim"] = {
+    cmd = { "Trouble", "TroubleToggle", "TroubleRefresh", "TroubleClose" },
     requires = "kyazdani42/nvim-web-devicons",
     config = function()
       require("trouble").setup {
@@ -276,14 +309,6 @@ return {
       }
     end
   },
-
-  -- ["williamboman/mason-lspconfig.nvim"] = {
-  --   setup = {
-  --     ensure_installed = {
-  --       "sumneko_lua",
-  --     }
-  --   }
-  -- },
 
   -- code formatting, linting etc
   -- ["jose-elias-alvarez/null-ls.nvim"] = {
