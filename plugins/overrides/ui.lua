@@ -30,11 +30,15 @@ return {
       local fn = vim.fn
       -- FILENAME
       local fileicon = " "
-      local filename = (fn.expand "%" == "" and "Empty ") or fn.expand "%:t"
-      local foldername_head = fn.expand("%:.:h:h"):gsub("\\", "/") .. "/"
-      local foldername_tail = fn.expand("%:.:h:t"):gsub("\\", "/")
+      local EMPTY_FILENAME = "[Empty]"
+      local filename = (fn.expand "%" == "" and EMPTY_FILENAME) or fn.expand "%:t"
+      local foldername = (fn.expand "%"  == "" and "") or fn.expand("%:.:h:t"):gsub("\\", "/")
+      local foldername_head = ""
+      local folder_info = ""
 
-      if filename ~= "Empty" then
+      local file_path_seps = "%%#St_folder_chevs#" .. "  " .. "%%#St_folder_head#"
+
+      if filename ~= EMPTY_FILENAME then
         local devicons_present, devicons = pcall(require, "nvim-web-devicons")
 
         if devicons_present then
@@ -45,14 +49,18 @@ return {
         filename = " " .. filename
       end
 
-      local file_name = fileicon .. filename
-      local file_path_seps = "%%#St_folder_chevs#" .. "  " .. "%%#St_folder_head#"
-      local folder_info = " " .. "%#St_folder_head#" .. foldername_head .. "%#St_file_folder_info#" .. " " .. foldername_tail .. " "
-      folder_info = folder_info:gsub("/", file_path_seps)
+      if foldername ~= "" then
+        foldername_head = fn.expand("%:.:h:h"):gsub("\\", "/") .. "/"
+        foldername = " " .. foldername .. " "
+        folder_info = " " .. "%#St_folder_head#" .. foldername_head .. "%#St_file_folder_info#" .. foldername
+        folder_info = folder_info:gsub("/", file_path_seps)
+      end
+
+      filename = fileicon .. filename
       -- local file_portion = "%#St_file_info#" .. file_name .. " " .. "%#St_file_sep#" .. sep_r .. "%#St_file_git_sep#" .. sep_r
       local file_color = "%#" .. ((vim.bo.modified and "St_file_modified") or "St_file_info") .. "#"
       local modified_suffix = (vim.bo.modified and " [+]") or ""
-      local file_portion = file_color .. file_name .. modified_suffix .. " " .. "%#St_file_sep#" .. sep_r
+      local file_portion = file_color .. filename .. modified_suffix .. " " .. "%#St_file_sep#" .. sep_r
       local folder_portion = "%#St_file_folder_info#" .. folder_info .. " " .. "%#St_folder_sep#" .. sep_r
       local file_info = file_portion .. folder_portion
 
