@@ -201,7 +201,7 @@ M.telescope = {
   n = {
     ["<leader>fp"] = { "<cmd> Telescope projections <CR>", "find projects" },
     ["<leader><C-t>"] = { "<cmd> Telescope telescope-tabs list_tabs <CR>", "Browse tabs" },
-    ["<leader>cd"] = { "<cmd>Telescope cder<CR>", "Change current directory (cder)"}
+    ["<leader>cdr"] = { "<cmd>Telescope cder<CR>", "Change current directory (cder)"}
   },
 }
 
