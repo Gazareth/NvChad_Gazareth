@@ -35,8 +35,8 @@ require('telescope').load_extension('projections')
 
 -- Create command to restore latest session
 vim.api.nvim_create_user_command("RestoreLastProjectionsSession", function()
-  local Session = require("projections.session")
-  Session.restore_latest()
+  local Switcher = require("projections.switcher")
+  Switcher:last()
 end, {})
 
 -- Autostore session on VimExit
@@ -57,7 +57,7 @@ vim.api.nvim_create_autocmd({ 'VimLeavePre' }, {
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
   callback = function()
     local Switcher = require("projections.switcher")
-    if vim.fn.argc() == 0 then Switcher.switch(vim.loop.cwd()) end
+    if vim.fn.argc() == 0 then Switcher:switch(vim.loop.cwd()) end
   end,
 })
 
