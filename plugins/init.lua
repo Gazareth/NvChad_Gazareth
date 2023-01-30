@@ -247,7 +247,7 @@ return {
 
   ["kylechui/nvim-surround"] = {
     keys = vim.list_extend(
-      get_keys({"n"}, {{ "y", "d", "c" }, {"s"}, allWordMotions}),
+      get_keys({"n"}, {{ "y", "d", "c" }, {"s"}, {"i", "a"}, allWordMotions}),
       get_keys({"x"}, {{ "S" }, allSurrounds})
     ),
     config = function()
