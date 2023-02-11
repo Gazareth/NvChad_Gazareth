@@ -22,20 +22,19 @@ return {
       end
 
       local in_project = function()
-        local info = get_current_project()
-        if info ~= nil and #info.path > 0 then
+        local project_dir = tostring(get_current_project():path())
+        if #project_dir > 0 then
           return true
         end
         return false
       end
 
       local current_project_match = function()
-        if in_project() then
-          local info = get_current_project()
+        if in_project() == true then
+          local project_dir = tostring(get_current_project():path())
           local file_dir = vim.fn.expand("%:p:h")
-          if info ~= nil and #info.path > 0 then
-            -- print("Checking project matches file:", file_dir, info.path)
-            if string.match(file_dir, info.path) then
+          if #project_dir > 0 then
+            if string.match(file_dir, vim.fn.expand(project_dir)) then
               return 1
             else
               return 0
