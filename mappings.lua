@@ -26,14 +26,13 @@ local switch_window = function(command)
 end
 
 local current_file_dir = function()
-  return (vim.fn.expand "%:p:h")
+  return vim.fn.expand "%:p:h"
 end
 
 local explore_current_file_dir = function()
   if vim.g.is_windows then
     local escaped_file_path = current_file_dir():gsub("\\", "\\\\")
     local command = '!"explorer.exe \'' .. escaped_file_path .. "'\""
-    vim.fn.setreg("*", command)
     vim.cmd(command)
   else
     vim.cmd("open " .. current_file_dir())
@@ -50,6 +49,8 @@ local return_to_dashboard = function(set_cd)
         vim.cmd "CdHome"
       end
     end
+    -- Exit current project
+    require("projections.switcher"):set_current()
   end
 end
 
@@ -68,7 +69,7 @@ M.general = {
       end,
       "Yank current file directory to clipboard",
     },
-    ["<leader>ecd"] = { explore_current_file_dir, "Open explorer at current directory (windows)" },
+    ["<leader>ecd"] = { explore_current_file_dir, "Open explorer at current file's directory (windows)" },
 
     -- Modes
     [";"] = { ":", "command mode", opts = { nowait = true } },
@@ -77,10 +78,10 @@ M.general = {
     ["ZD"] = { return_to_dashboard(false), "Return to project dashboard" },
     ["ZDQ"] = { return_to_dashboard(true), "Return to dashboard" },
     ["ZA"] = { "<cmd> wa | qa <CR>", "Save all files then quit vim" },
-    ["ZS"] = { "<cmd>so %<CR>", "Source current file" },
+    ["Zs"] = { "<cmd>so %<CR>", "Source current file" },
 
     -- Tab/window switching
-    ["<C-w><C-v>"] = { "<cmd> :vert sb # <CR>", "Open a vertical split of current and previous buffer" },
+    ["<C-w><C-v>"] = { "<cmd> vert sb # <CR>", "Open a vertical split of current and previous buffer" },
     ["<C-w><C-t>"] = { "<cmd> tabc <CR>", "Close tab" },
     ["<C-t>"] = { "<cmd> tabnew | Alpha <CR>", "Open new tab and run Alpha (dashboard)" },
     ["<TAB>"] = { switch_window "w", "Switch to next window" },
@@ -124,8 +125,14 @@ M.general = {
   v = {
     ["<leader>/sa"] = { 'y:%s/<C-R>"//g<left><left>', "Replace selection on all lines." },
     ["<leader>/sc"] = { 'y:%s/<C-R>"//gc<left><left><left>', "Replace selection on all lines (with confirmation)." },
-    ["<leader>/sl"] = { 'y:s/<C-R>"//g<left><left>', "ReplaceDingo selection on current line." },
+    ["<leader>/sl"] = { 'y:s/<C-R>"//g<left><left>', "Replace selection on current line." },
   },
+  x = {
+    ["il"] = { "g_o^", "Select inner line" },
+  },
+  o = {
+    ["il"] = { "<cmd>:normal vil<CR>", "Text object: inner line" }
+  }
 }
 
 M.leap = {
