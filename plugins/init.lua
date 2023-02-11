@@ -85,7 +85,7 @@ return {
   ["nathom/filetype.nvim"] = {},
 
   ["mbbill/undotree"] = {},
-  ["gnikdroy/projections.nvim"] = {
+  ["Gazareth/projections.nvim"] = {
     after = "telescope.nvim",
     config = function()
       require "custom.plugins.configs.projections"

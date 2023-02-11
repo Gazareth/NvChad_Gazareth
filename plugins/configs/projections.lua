@@ -42,9 +42,9 @@ end, {})
 -- Autostore session on VimExit
 vim.api.nvim_create_autocmd({ 'VimLeavePre' }, {
   callback = function()
-    local Session = require("projections.session")
     local buflist = vim.api.nvim_list_bufs();
-    if #buflist > 1 then
+    if #buflist > 0 then
+      local Session = require("projections.session")
       local current_type = vim.bo.filetype
       if current_type ~= "alpha" and #current_type ~= 0 then
         Session.store(vim.loop.cwd())
