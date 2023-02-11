@@ -1,6 +1,8 @@
 
 -- Global command to set current directory to the nvim config dir
 vim.api.nvim_create_user_command("CdHome", function()
+  -- local Switcher = require("projections.switcher")
+  -- Switcher:set_current()
   vim.cmd("cd "..vim.fn.stdpath('config'))
 end, {})
 
@@ -9,7 +11,6 @@ end, {})
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
   callback = function()
     local current_type = vim.bo.filetype
-    local configPath = vim.fn.stdpath('config')
     if current_type == "alpha" or #current_type == 0 then
       vim.schedule(function() vim.cmd("CdHome") end)
     end
@@ -33,7 +34,7 @@ local isBufCloseCandidate = function(bi)
     elseif #bw == 1 then
       -- Buffer is not hidden... it is being shown on at least one window!
       -- But fear not! If these windows are the only ones in their tabs, we can close!
-      for i,wid in ipairs(bw) do
+      for _,wid in ipairs(bw) do
         local tp = vim.api.nvim_win_get_tabpage(wid)
         local ws = vim.api.nvim_tabpage_list_wins(tp)
         if #ws == 1 then
@@ -49,7 +50,7 @@ local buf_clean = function()
   for _,bi in ipairs(bufCloseCandidates) do
     local c_score = isBufCloseCandidate(bi)
     if c_score > 0 then
-      if c_score == 1 then 
+      if c_score == 1 then
         vim.cmd("bd "..bi)
         -- print("Closing "..bi)
       elseif c_score == 2 then
@@ -95,51 +96,11 @@ vim.api.nvim_create_autocmd({ "TextYankPost" }, {
   end,
 })
 
-
--- OPEN CONFIG FILES
--- Generic string split (courtesy of https://www.reddit.com/r/neovim/comments/su0em7/pathjoin_for_lua_or_vimscript_do_we_have_anything/)
-local split = function(inputString, sep)
-  local fields = {}
-  local pattern = string.format("([^%s]+)", sep)
-  local _ = string.gsub(inputString, pattern, function(c)
-    fields[#fields + 1] = c
-  end)
-
-  return fields
-end
-
-local getConfigFilePath = function(configRoot, relPath, pathSeparator)
-
-  local configPathParts = split(configRoot, pathSeparator)
-  local relPathParts = split(relPath, pathSeparator)
-
-  local fullPathParts = {}
-
-  for _, pathPart in ipairs(configPathParts) do
-    table.insert(fullPathParts,pathPart)
-  end
-
-  for _, pathPart in ipairs(relPathParts) do
-    table.insert(fullPathParts,pathPart)
-  end
-
-  return table.concat(fullPathParts, pathSeparator)
-end
-
-local getOSConfig = function()
-  local pathSeparator = "/"
-  if(vim.g.is_windows) then
-    pathSeparator = "\\"
-  end
-  local configRoot = vim.fn.stdpath('config')
-  return { pathSeparator = pathSeparator, configRoot = configRoot }
-end
-
 local open_config_files = function(left_rel_path, right_rel_path)
-  local OSCfg = getOSConfig()
-  local left_full_path = getConfigFilePath(OSCfg.configRoot, left_rel_path, OSCfg.pathSeparator)
-  local right_full_path = getConfigFilePath(OSCfg.configRoot, right_rel_path, OSCfg.pathSeparator)
-
+  local cfg_root = vim.fn.stdpath('config')
+  local left_full_path = vim.fn.expand(cfg_root .. "/" .. left_rel_path)
+  local right_full_path = vim.fn.expand(cfg_root .. "/" .. right_rel_path)
+  print("Opening files: [" .. left_full_path .. "], [", right_full_path .. "]")
   local open_fn = "tabnew"
   if vim.bo.filetype == "alpha" then
     open_fn = "e"
@@ -150,20 +111,20 @@ end
 
 local config_commands = {
   ["EditCustomDashboard"] = {
-    "lua\\plugins\\configs\\alpha.lua", "lua\\custom\\plugins\\overrides\\alpha.lua"
+    "lua/plugins/configs/alpha.lua", "lua/custom/plugins/overrides/alpha.lua"
   },
   ["EditKeyMappings"] = {
-    "lua\\core\\mappings.lua", "lua\\custom\\mappings.lua"
+    "lua/core/mappings.lua", "lua/custom/mappings.lua"
   },
   ["EditInstalledPlugins"] = {
-    "lua\\plugins\\init.lua", "lua\\custom\\plugins\\init.lua"
+    "lua/plugins/init.lua", "lua/custom/plugins/init.lua"
   },
   ["EditCustomOptions"] = {
-    "lua\\core\\options.lua", "lua\\custom\\options.lua"
+    "lua/core/options.lua", "lua/custom/options.lua"
   },
 }
 
--- Create commands for above configs
+-- Create commands for each entry in `config_commands` above
 for k,v in pairs(config_commands) do
   vim.api.nvim_create_user_command(k, function()
     open_config_files(v[1], v[2])
