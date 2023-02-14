@@ -118,12 +118,12 @@ return {
   },
 
   -- Multi-coloured indent indicators
-  ["mawkler/modicator.nvim"] = {
-    after = "base46",
-    config = function()
-      require "custom.plugins.configs.modicator"
-    end,
-  },
+  -- ["mawkler/modicator.nvim"] = {
+  --   after = "base46",
+  --   config = function()
+  --     require "custom.plugins.configs.modicator"
+  --   end,
+  -- },
 
   ["yuttie/comfortable-motion.vim"] = {
     config = function()
