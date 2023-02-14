@@ -1,15 +1,18 @@
 local present, projections = pcall(require, "projections")
+local workspaces_env, workspaces = pcall(require, "custom.projections-workspaces")
 
 if not present then
+  print("Error: Tried to load custom config for projections.nvim, but couldn't find projections.nvim")
+  return
+end
+
+if not workspaces_env then
+  print("Warning: 'projections-workspaces' not loaded")
   return
 end
 
 local options = {
-  workspaces = {
-    "X:\\Development\\Games\\Both",
-    "C:\\Users\\Gareth\\AppData\\Local",
-    "X:\\Development\\vim\\NvChad",
-  },
+  workspaces = workspaces,
   patterns = {
     ".git", ".svn", ".hg"
   },
