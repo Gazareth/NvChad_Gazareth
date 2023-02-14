@@ -244,18 +244,18 @@ M.trouble = {
   },
 }
 
-M.wordmotion = {
-  [{"n", "x", "o"}] = {
-    ["<A-w>"] = {"<Plug>WordMotion_w", "WordMotion: Move 1 word forwards."},
-    ["<A-b>"] = {"<Plug>WordMotion_b", "WordMotion: Move 1 word backwards."},
-    ["<A-e>"] = {"<Plug>WordMotion_e", "WordMotion: Move to next end of word."},
-    ["<A-g><A-e>"] = {"<Plug>WordMotion_ge", "WordMotion: Move to end of previous word."},
-  },
-  [{"x", "o"}] = {
-    ["<A-i><A-w>"] = { "<Plug>WordMotion_iw", "WordMotion: Inner word"},
-    ["<A-a><A-w>"] = { "<Plug>WordMotion_aw", "WordMotion: Around word"},
-  }
-}
+-- M.wordmotion = {
+--   [{"n", "x", "o"}] = {
+--     ["<A-w>"] = {"<Plug>WordMotion_w", "WordMotion: Move 1 word forwards."},
+--     ["<A-b>"] = {"<Plug>WordMotion_b", "WordMotion: Move 1 word backwards."},
+--     ["<A-e>"] = {"<Plug>WordMotion_e", "WordMotion: Move to next end of word."},
+--     ["<A-g><A-e>"] = {"<Plug>WordMotion_ge", "WordMotion:<C-S-T> Move to end of previous word."},
+--   },
+--   [{"x", "o"}] = {
+--     ["<A-i><A-w>"] = { "<Plug>WordMotion_iw", "WordMotion: Inner word"},
+--     ["<A-a><A-w>"] = { "<Plug>WordMotion_aw", "WordMotion: Around word"},
+--   }
+-- }
 
 M.undoquit = {
   n = {
