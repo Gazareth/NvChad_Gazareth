@@ -259,6 +259,7 @@ return {
 
   ["drybalka/tree-climber.nvim"] = {},
 
+  ["nvim-treesitter/playground"] = {},
   ["nvim-treesitter/nvim-treesitter-textobjects"] = {
     after = "nvim-treesitter",
     config = function()
@@ -271,8 +272,10 @@ return {
               ["if"] = { query = "@function.inner", desc = "Select inner function" },
               ["ac"] = { query = "@class.outer", desc = "Select around class" },
               ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+              ["apr"] = { query = "@parameter.outer", desc = "Select around parameter" },
+              ["ipr"] = { query = "@parameter.inner", desc = "Select inner part of a parameter region" },
             },
-          }
+          },
         }
       })
     end
