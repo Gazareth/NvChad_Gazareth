@@ -1,16 +1,24 @@
 local M = {}
 
+local blankline_highlight_groups = {
+  "",
+  "IndentBlanklineIndent1",
+  "IndentBlanklineIndent2",
+  "IndentBlanklineIndent3",
+  "IndentBlanklineIndent4",
+  "IndentBlanklineIndent5",
+  "IndentBlanklineIndent6",
+}
+
 M.alpha = require "custom.plugins.overrides.alpha"
 
 M.blankline = {
   space_char_blankline = " ",
-  show_trailing_blankline_indent = false,
-  show_first_indent_level = true,
   show_current_context = true,
+  show_current_context_start = true,
+  show_first_indent_level = false,
+  show_trailing_blankline_indent = false,
   context_char = "┃",
-  -- use_treesitter = true,
-  -- use_treesitter_scope = true,
-  space_char = "",
   filetype_exclude = {
     "NvimTree",
     "lspinfo",
@@ -21,14 +29,8 @@ M.blankline = {
     "alpha",
     "",
   },
-  char_highlight_list = {
-    "IndentBlanklineIndent1",
-    "IndentBlanklineIndent2",
-    "IndentBlanklineIndent3",
-    "IndentBlanklineIndent4",
-    "IndentBlanklineIndent5",
-    "IndentBlanklineIndent6",
-  },
+  char_highlight_list = blankline_highlight_groups,
+  context_highlight_list = blankline_highlight_groups,
 }
 
 M.treesitter = {
