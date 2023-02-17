@@ -208,6 +208,12 @@ return {
     after = { "leap.nvim", "nvim-treesitter" }
   },
 
+  ["ggandor/leap-spooky.nvim"] = {
+    config = function()
+      require('leap-spooky').setup()
+    end
+  },
+
   ["tpope/vim-fugitive"] = {
     opt = true,
     cmd = {
