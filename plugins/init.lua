@@ -72,7 +72,7 @@ return {
     override_options = overrides.mason,
   },
 
-  ["kyazdani42/nvim-tree.lua"] = {
+  ["nvim-tree/nvim-tree.lua"] = {
     override_options = overrides.nvimtree,
   },
 
@@ -299,7 +299,13 @@ return {
     end
   },
 
-  ["RRethy/vim-illuminate"] = {},
+  ["tzachar/local-highlight.nvim"] = {
+    config = function()
+      require('local-highlight').setup({
+      })
+    end
+  },
+  ["tomarrell/vim-npr"] = {},
 
   ["folke/trouble.nvim"] = {
     cmd = { "Trouble", "TroubleToggle", "TroubleRefresh", "TroubleClose" },

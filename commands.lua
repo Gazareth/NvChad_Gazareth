@@ -52,12 +52,10 @@ local buf_clean = function()
     if c_score > 0 then
       if c_score == 1 then
         vim.cmd("bd "..bi)
-        -- print("Closing "..bi)
       elseif c_score == 2 then
         local bw = vim.fn.win_findbuf(bi)
         if #bw == 1 then
           vim.api.nvim_win_close(bw[1], false)
-          -- print("Closing window containing only "..bi)
         end
       end
     end
@@ -100,7 +98,6 @@ local open_config_files = function(left_rel_path, right_rel_path)
   local cfg_root = vim.fn.stdpath('config')
   local left_full_path = vim.fn.expand(cfg_root .. "/" .. left_rel_path)
   local right_full_path = vim.fn.expand(cfg_root .. "/" .. right_rel_path)
-  print("Opening files: [" .. left_full_path .. "], [", right_full_path .. "]")
   local open_fn = "tabnew"
   if vim.bo.filetype == "alpha" then
     open_fn = "e"
@@ -131,3 +128,10 @@ for k,v in pairs(config_commands) do
   end, {})
 end
 
+-- Attach local highlighting to each buffer
+vim.api.nvim_create_autocmd('BufRead', {
+  pattern = {'*.*'},
+  callback = function(data)
+    require('local-highlight').attach(data.buf)
+  end
+})
