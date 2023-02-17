@@ -48,6 +48,8 @@ if vim.g.is_windows then
     }
   end
   final_opts = vim.tbl_extend("force", options, woptions)
+else
+  final_opts = options
 end
 
 -- Set all options
