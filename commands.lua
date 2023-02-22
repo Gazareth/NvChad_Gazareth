@@ -128,10 +128,3 @@ for k,v in pairs(config_commands) do
   end, {})
 end
 
--- Attach local highlighting to each buffer
-vim.api.nvim_create_autocmd('BufRead', {
-  pattern = {'*.*'},
-  callback = function(data)
-    require('local-highlight').attach(data.buf)
-  end
-})

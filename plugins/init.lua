@@ -57,7 +57,7 @@ return {
   },
 
   ["folke/which-key.nvim"] = {
-    disable = false,
+    -- disable = false,
   },
 
   ["nvim-treesitter/nvim-treesitter"] = {
@@ -84,7 +84,10 @@ return {
 
   ["nathom/filetype.nvim"] = {},
 
+  ["tomarrell/vim-npr"] = {},
+
   ["mbbill/undotree"] = {},
+
   ["Gazareth/projections.nvim"] = {
     after = "telescope.nvim",
     config = function()
@@ -96,6 +99,27 @@ return {
     after = "telescope.nvim",
     config = function()
       require('telescope').load_extension('cder')
+    end
+  },
+
+  ["tpope/vim-fugitive"] = {
+    opt = true,
+    cmd = {
+      "G", "Git", "Gdiffsplit", "Gvdiffsplit", "Gedit", "Gsplit",
+      "Gread", "Gwrite", "Ggrep", "Glgrep", "Gmove",
+      "Gdelete", "Gremove", "Gbrowse",
+    },
+  },
+
+  ["numToStr/BufOnly.nvim"] = {
+    cmd = "BufOnly"
+  },
+
+  ["AndrewRadev/undoquit.vim"] = {
+    cmd = "Undoquit",
+    config = function()
+      vim.g.undoquit_mapping = ""
+      vim.g.undoquit_tab_mapping = ""
     end
   },
 
@@ -131,6 +155,24 @@ return {
     end
   },
 
+  ["wfxr/minimap.vim"] = {
+    config = function()
+      vim.g.minimap_width = 5
+    end
+  },
+
+  ["folke/trouble.nvim"] = {
+    cmd = { "Trouble", "TroubleToggle", "TroubleRefresh", "TroubleClose" },
+    requires = "kyazdani42/nvim-web-devicons",
+    config = function()
+      require("trouble").setup {
+        vim.keymap.set("n", "gR", function() require("trouble").next({skip_groups = true, jump = true}); end,
+          {silent = true, noremap = true}
+        ),
+      }
+    end
+  },
+
   ["folke/zen-mode.nvim"] = {
     cmd = { "ZenMode" },
     config = function()
@@ -150,19 +192,13 @@ return {
     config = function() require("focus").setup() end
   },
 
-  ["numToStr/BufOnly.nvim"] = {
-    cmd = "BufOnly"
-  },
+  ["folke/lsp-colors.nvim"] = {},
 
-  ["AndrewRadev/undoquit.vim"] = {
-    cmd = "Undoquit",
+  ["echasnovski/mini.cursorword"] = {
     config = function()
-      vim.g.undoquit_mapping = ""
-      vim.g.undoquit_tab_mapping = ""
+      require('mini.cursorword').setup()
     end
   },
-
-  ["folke/lsp-colors.nvim"] = {},
 
   ["max397574/better-escape.nvim"] = {
     event = "InsertEnter",
@@ -178,6 +214,40 @@ return {
       require("open").setup()
       vim.keymap.set('n', 'gx', require('open').open_cword)
     end,
+  },
+
+  ["tpope/vim-repeat"] = {},
+
+  ["tpope/vim-unimpaired"] = {
+    keys = vim.list_extend(
+      vim.list_extend(
+        get_keys({"n"}, {{"[", "]"}, allVimUnimpairedKeys}),
+        get_keys({"n"}, {{">", "<", "="}, {"p", "P"}})
+      ),
+      get_keys({"x"}, {{"[", "]"}, { "x", "u", "y", "c" }})
+    )
+  },
+
+  ["gbprod/stay-in-place.nvim"] = {},
+
+  ["andymass/vim-matchup"] = {},
+
+  ["AndrewRadev/tagalong.vim"] = {},
+
+  ["arthurxavierx/vim-caser"] = {
+    keys = vim.list_extend(
+      vim.list_extend(
+        get_keys({"n"}, {{"gs"}, {"a", "i"}, allVimCaserKeys, allWordMotions}),
+        get_keys({"n"}, {{"gs"}, { "w", "W" }})
+      ),
+      get_keys({"x"}, {{"gs"}, {"w", "W"}})
+    )
+  },
+
+  ["mg979/vim-visual-multi"] = {
+    config = function()
+      require "custom.plugins.configs.vim-visual-multi"
+    end
   },
 
   ["gbprod/substitute.nvim"] = {
@@ -214,78 +284,77 @@ return {
     end
   },
 
-  ["tpope/vim-fugitive"] = {
-    opt = true,
-    cmd = {
-      "G", "Git", "Gdiffsplit", "Gvdiffsplit", "Gedit", "Gsplit",
-      "Gread", "Gwrite", "Ggrep", "Glgrep", "Gmove",
-      "Gdelete", "Gremove", "Gbrowse",
-    },
-  },
-
-  ["arthurxavierx/vim-caser"] = {
-    keys = vim.list_extend(
-      vim.list_extend(
-        get_keys({"n"}, {{"gs"}, {"a", "i"}, allVimCaserKeys, allWordMotions}),
-        get_keys({"n"}, {{"gs"}, { "w", "W" }})
-      ),
-      get_keys({"x"}, {{"gs"}, {"w", "W"}})
-    )
-  },
-
-  ["tpope/vim-repeat"] = {},
-
-  ["tpope/vim-unimpaired"] = {
-    keys = vim.list_extend(
-      vim.list_extend(
-        get_keys({"n"}, {{"[", "]"}, allVimUnimpairedKeys}),
-        get_keys({"n"}, {{">", "<", "="}, {"p", "P"}})
-      ),
-      get_keys({"x"}, {{"[", "]"}, { "x", "u", "y", "c" }})
-    )
-  },
-
-  ["wellle/targets.vim"] = {},
-
-  ["gbprod/stay-in-place.nvim"] = {},
-
-  ["AndrewRadev/tagalong.vim"] = {},
-
-  ["kylechui/nvim-surround"] = {
-    keys = vim.list_extend(
-      get_keys({"n"}, {{ "y", "d", "c" }, {"s"}, {"i", "a"}, allWordMotions}),
-      get_keys({"x"}, {{ "S" }, allSurrounds})
-    ),
+  ["echasnovski/mini.ai"] = {
     config = function()
-      require("nvim-surround").setup()
-    end
-  },
-
-  ["andymass/vim-matchup"] = {},
-
-  ["drybalka/tree-climber.nvim"] = {},
-
-  ["nvim-treesitter/playground"] = {},
-  ["nvim-treesitter/nvim-treesitter-textobjects"] = {
-    after = "nvim-treesitter",
-    config = function()
-      require("nvim-treesitter.configs").setup({
-        textobjects = {
-          select = {
-            enable = true,
-            keymaps = {
-              ["af"] = { query = "@function.outer", desc = "Select around function" },
-              ["if"] = { query = "@function.inner", desc = "Select inner function" },
-              ["ac"] = { query = "@class.outer", desc = "Select around class" },
-              ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
-              ["apr"] = { query = "@parameter.outer", desc = "Select around parameter" },
-              ["ipr"] = { query = "@parameter.inner", desc = "Select inner part of a parameter region" },
-            },
-          },
+      local spec_treesitter = require('mini.ai').gen_spec.treesitter
+      require('mini.ai').setup({
+        custom_textobjects = {
+          F = spec_treesitter({ a = '@function.outer', i = '@function.inner' }),
+          o = spec_treesitter({
+            a = { '@conditional.outer', '@loop.outer' },
+            i = { '@conditional.inner', '@loop.inner' },
+          }),
+          a = spec_treesitter({
+            a = { '@parameter.outer' },
+            i = { '@parameter.inner' },
+          }),
+          v = spec_treesitter({
+            a = { '@variable' },
+            i = { '@variable' },
+          })
         }
       })
     end
   },
+
+  ["echasnovski/mini.surround"] = {
+    config = function()
+      require('mini.surround').setup({
+        -- Duration (in ms) of highlight when calling `MiniSurround.highlight()`
+        highlight_duration = 1500,
+
+        -- Module mappings. Use `''` (empty string) to disable one.
+        mappings = {
+          add = 'ys', -- Add surrounding in Normal and Visual modes
+          delete = 'ds', -- Delete surrounding
+          find = 'gsf', -- Find surrounding (to the right)
+          find_left = 'gsF', -- Find surrounding (to the left)
+          highlight = 'gsh', -- Highlight surrounding
+          replace = 'cs', -- Replace surrounding
+          update_n_lines = '<leader>ysn', -- Update `n_lines`
+
+          suffix_last = 'l', -- Suffix to search with "prev" method
+          suffix_next = 'n', -- Suffix to search with "next" method
+        },
+
+        -- How to search for surrounding (first inside current line, then inside
+        -- neighborhood). One of 'cover', 'cover_or_next', 'cover_or_prev',
+        -- 'cover_or_nearest', 'next', 'prev', 'nearest'. For more details,
+        -- see `:h MiniSurround.config`.
+        search_method = 'nearest',
+      })
+    end
+  },
+
+  ["nvim-treesitter/nvim-treesitter-textobjects"] = {
+    after = "nvim-treesitter",
+    requires = "nvim-treesitter/nvim-treesitter",
+  },
+
+  -- ["kylechui/nvim-surround"] = {
+  --   keys = vim.list_extend(
+  --     get_keys({"n"}, {{ "y", "d", "c" }, {"s"}, {"i", "a"}, allWordMotions}),
+  --     get_keys({"x"}, {{ "S" }, allSurrounds})
+  --   ),
+  --   tag = "*", -- Use for stability; omit to use `main` branch for the latest features
+  --   config = function()
+  --     require("nvim-surround").setup()
+  --   end
+  -- },
+
+  ["drybalka/tree-climber.nvim"] = {},
+
+  ["nvim-treesitter/playground"] = {},
 
   -- ["rktjmp/lush.nvim"] = {},
   -- ["Dkendal/nvim-treeclimber"] = {
@@ -299,31 +368,12 @@ return {
   --   end
   -- },
 
-  ["mg979/vim-visual-multi"] = {
-    config = function()
-      require "custom.plugins.configs.vim-visual-multi"
-    end
-  },
-
-  ["tzachar/local-highlight.nvim"] = {
-    config = function()
-      require('local-highlight').setup({
-      })
-    end
-  },
-  ["tomarrell/vim-npr"] = {},
-
-  ["folke/trouble.nvim"] = {
-    cmd = { "Trouble", "TroubleToggle", "TroubleRefresh", "TroubleClose" },
-    requires = "kyazdani42/nvim-web-devicons",
-    config = function()
-      require("trouble").setup {
-        vim.keymap.set("n", "gR", function() require("trouble").next({skip_groups = true, jump = true}); end,
-          {silent = true, noremap = true}
-        ),
-      }
-    end
-  },
+  -- ["tzachar/local-highlight.nvim"] = {
+  --   config = function()
+  --     require('local-highlight').setup({
+  --     })
+  --   end
+  -- },
 
   -- code formatting, linting etc
   -- ["jose-elias-alvarez/null-ls.nvim"] = {

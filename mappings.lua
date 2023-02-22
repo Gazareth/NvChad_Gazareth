@@ -174,6 +174,12 @@ M.lspconfig = {
   },
 }
 
+M.minimap = {
+  n = {
+    ["<leader>mm"] = { "<cmd> MinimapToggle <CR>", "Toggle code mini-map" }
+  }
+}
+
 M.nvimtree = {
   n = {
     ["<leader>fd"] = {
