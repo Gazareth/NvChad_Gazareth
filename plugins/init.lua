@@ -278,9 +278,15 @@ return {
     after = { "leap.nvim", "nvim-treesitter" }
   },
 
-  ["ggandor/leap-spooky.nvim"] = {
+  ["Gazareth/leap-spooky.nvim"] = {
+    branch = "feat/auto-targets",
     config = function()
-      require('leap-spooky').setup()
+      require('leap-spooky').setup({
+        custom_textobjects = {
+          "o", "a", "f", "F", "v"
+        },
+        auto_targets = true
+      })
     end
   },
 
@@ -294,14 +300,12 @@ return {
             a = { '@conditional.outer', '@loop.outer' },
             i = { '@conditional.inner', '@loop.inner' },
           }),
-          a = spec_treesitter({
-            a = { '@parameter.outer' },
-            i = { '@parameter.inner' },
-          }),
           v = spec_treesitter({
             a = { '@variable' },
             i = { '@variable' },
-          })
+          }),
+          w = { '[^%w]+()()%w+()%s*()[^%w]*' },
+          W = { '[%s]+()()%S+()%s*()' },
         }
       })
     end
