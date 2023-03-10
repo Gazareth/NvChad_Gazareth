@@ -315,7 +315,7 @@ return {
     config = function()
       require('mini.surround').setup({
         -- Duration (in ms) of highlight when calling `MiniSurround.highlight()`
-        highlight_duration = 1500,
+        highlight_duration = 500,
 
         -- Module mappings. Use `''` (empty string) to disable one.
         mappings = {
