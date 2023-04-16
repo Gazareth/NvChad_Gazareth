@@ -292,21 +292,157 @@ return {
 
   ["echasnovski/mini.ai"] = {
     config = function()
-      local spec_treesitter = require('mini.ai').gen_spec.treesitter
+      local mini_ai = require('mini.ai')
+      local spec_treesitter = mini_ai.gen_spec.treesitter
+
+      local word_modes = {
+        ["word"] = "word",
+        ["non_word"] = "non_word",
+        ["whitespace"] = "whitespace"
+      }
+
+      local character_types = {
+        [word_modes.word] = "%w_",
+        [word_modes.non_word] = "^%w_",
+        [word_modes.whitespace] = "%s"
+      }
+
+      -- "word" helpers
+      local word_pattern = "[" .. character_types.word .. "]"
+      local non_word_pattern = "[" .. character_types.non_word .. "]"
+      local initial_word_pattern = { "%f", word_pattern, "()", word_pattern, "+" }
+
+      -- Sequence end is found with a frontier pattern of end_pattern followed by any number of end_pattern (including 0)
+      local end_sequence = function(end_pattern) return { "%f", end_pattern, "()%s*()", end_pattern, "*"  } end
+      local any_space = "%s*"
+
+      local word_captures = {
+        [word_modes.word] = "[^%w_]+()%s*()[%w_]+()%f[^%w_]%s*()",
+        [word_modes.non_word] = "[%w_]+()%s*()[^%w_]+()%f[%w_%s]%s*()",
+        [word_modes.whitespace] = { ["i"] = "[^%s]+()[%s]+()[^%s]+", ["a"] = "[^%s]+()()[%s]+()()[^%s]+" }
+      }
+
       require('mini.ai').setup({
         custom_textobjects = {
+          a = spec_treesitter({
+            a = { '@parameter.outer' },
+            i = { '@parameter.inner' },
+          }),
           F = spec_treesitter({ a = '@function.outer', i = '@function.inner' }),
           o = spec_treesitter({
             a = { '@conditional.outer', '@loop.outer' },
             i = { '@conditional.inner', '@loop.inner' },
           }),
           v = spec_treesitter({
-            a = { '@variable' },
-            i = { '@variable' },
+            a = { '@pair.outer`' },
+            i = { '@pair.inner`' },
           }),
-          w = { '[^%w]+()()%w+()%s*()[^%w]*' },
-          W = { '[%s]+()()%S+()%s*()' },
-        }
+          ["1"] = function(ai_type, text_obj, opts)
+            -- First find out what kind of character is under the cursor
+            local col = vim.api.nvim_win_get_cursor(0)[2] + 1
+            local line = vim.api.nvim_get_current_line()
+            local char = line:sub(col,col)
+
+            -- Determine which "mode" we are in (the "w" text object behaves differently depending on context)
+            -- 3 modes:
+            -- - "word":
+            --     (i) capture all characters between alphanumeric & whitespace characters
+            --     (a) As above but include trailing space, or leading space if no trailing space
+            -- - "non_word":
+            --     (i) Capture all non-word characters between whitespace
+            --     (a) As above but include trailing space, or leading space if no trailing space
+            -- - "whitespace":
+            --     (i) Capture all consecutive spaces between non-space characters
+            --     (a) As above but also capture next group of consecutive characters belonging to the same word/non-word set
+            local word_mode = ""
+
+            for k, v in pairs(character_types) do
+              word_mode = string.find(char, "[" .. v .. "]") and k or word_mode
+            end
+
+            -- print("got word mode!", word_mode)
+            local final_pattern_group = word_captures[word_mode]
+            -- print("Final pattern group:", final_pattern_group)
+            local final_pattern = type(word_captures) == "table" and final_pattern_group[ai_type] or final_pattern_group
+            -- print("Final pattern:", final_pattern)
+
+            -- vim.schedule(function() print("final pattern: ", ai_type, text_obj, " - ", final_pattern) end)
+            return mini_ai.find_textobject_region({ final_pattern }, ai_type, opts)
+          end,
+          ["0"] = function(ai_type, text_obj, opts)
+            -- First find out what kind of character is under the cursor
+            local col = vim.api.nvim_win_get_cursor(0)[2] + 1
+            local line = vim.api.nvim_get_current_line()
+            local char = line:sub(col,col)
+
+            -- Determine which "mode" we are in (the "w" text object behaves differently depending on context)
+            -- 3 modes:
+            -- - "word":
+            --     (i) capture all characters between alphanumeric & whitespace characters
+            --     (a) As above but include trailing space, or leading space if no trailing space
+            -- - "non_word":
+            --     (i) Capture all non-word characters between whitespace
+            --     (a) As above but include trailing space, or leading space if no trailing space
+            -- - "whitespace":
+            --     (i) Capture all consecutive spaces between non-space characters
+            --     (a) As above but also capture next group of consecutive characters belonging to the same word/non-word set
+            local word_mode = ""
+
+            for k, v in pairs(character_types) do
+              word_mode = char:find(v) and k or word_mode
+            end
+
+            -- If we're currently within a word
+            local is_in_word = char:find(word_pattern)
+
+            -- Start with any spaces being captured by "a" mode
+            local pattern = {  }
+            -- local pattern = { "()" }
+
+            if is_in_word then
+              vim.list_extend(pattern, initial_word_pattern)
+            else
+              -- If cursor not in a "word", include the "non-word" characters, and end at the next valid word characters
+              -- Frontier pattern to find beinning of "non-word", then capture from there onwards, at least one "non-word" character.
+              vim.list_extend(pattern,  { non_word_pattern, "-", "()", non_word_pattern, "+" })
+              -- With non-words we also want to end the current pattern at the start of the next valid word, so we can continue searching onwards
+            end
+
+            vim.list_extend(pattern, { "()" })
+
+            if opts.n_times == 1 then
+              local end_pattern = is_in_word and non_word_pattern or word_pattern
+              vim.list_extend(pattern, end_sequence(end_pattern))
+            end
+
+            vim.schedule(function() print("final pattern (" .. ai_type .. "): " .. table.concat(pattern)) end)
+
+            -- if ai_type == "a" then
+            -- -- TODO: find single word and prune trailing space if there is a leading space when using "a" mode
+            -- end
+
+            if opts.n_times > 1 and not opts.discrete then
+              -- for each additional word being searched for, add more words
+              for _ = 2, opts.n_times do
+                -- At least one 'non word character' causes a separation to the next event
+                vim.list_extend(pattern, { non_word_pattern, "+", "%f", word_pattern, word_pattern, "-" })
+              end
+
+              -- vim.list_extend(pattern, end_sequence(word_pattern))
+              vim.list_extend(pattern, { "()", "()"  })
+
+              opts.n_times = 1
+            end
+
+            local full_pattern = table.concat(pattern)
+
+            opts.search_method = "cover_or_next"
+            -- vim.schedule(function() print(full_pattern) end)
+            return mini_ai.find_textobject_region({ full_pattern }, ai_type, opts)
+          end
+          -- W = { '[%s]+()()%S+()%s*()' },
+        },
+        -- search_method@ = "cover"
       })
     end
   },
