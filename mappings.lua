@@ -271,7 +271,7 @@ M.undoquit = {
 
 M.zen_mode = {
   n = {
-    ["<S-F3>"] = { ":ZenMode <CR>", 'Toggle "Total Zen" mode' },
+    ["<S-F3>"] = { "<cmd> ZenMode <CR>", 'Toggle "Total Zen" mode' },
   },
 }
 
