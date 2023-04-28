@@ -307,6 +307,14 @@ return {
         [word_modes.whitespace] = "%s"
       }
 
+      local get_selected_region = function()
+        local start_pos = vim.api.nvim_buf_get_mark(0, "<")
+
+        local end_pos = vim.api.nvim_buf_get_mark(0, ">")
+
+        return { start_pos = start_pos, end_pos = end_pos }
+      end
+
       -- "word" helpers
       local word_pattern = "[" .. character_types.word .. "]"
       local non_word_pattern = "[" .. character_types.non_word .. "]"
@@ -338,7 +346,27 @@ return {
             i = { '@pair.inner`' },
           }),
           ["1"] = function(ai_type, text_obj, opts)
-            -- First find out what kind of character is under the cursor
+
+            -- If we're in visual mode, retain the current selected region, and act as if the cursor is at the end
+            local visual_mode = opts.vis_mode == nil and true or false
+
+            local current_selection = {}
+
+            if(visual_mode) then
+              -- Store current selection
+              current_selection = get_selected_region()
+              -- Exit visual mode
+              local esc = vim.api.nvim_replace_termcodes('<esc>', true, false, true)
+              vim.api.nvim_feedkeys(esc, 'x', false)
+
+
+              vim.schedule(function() print("stored_regions: ", vim.inspect(current_selection)) end)
+
+              -- put cursor at end of previous position
+              vim.api.nvim_win_set_cursor(0, current_selection.end_pos)
+            end
+
+            -- Find out what kind of character is under the cursor
             local col = vim.api.nvim_win_get_cursor(0)[2] + 1
             local line = vim.api.nvim_get_current_line()
             local char = line:sub(col,col)
@@ -354,20 +382,23 @@ return {
             -- - "whitespace":
             --     (i) Capture all consecutive spaces between non-space characters
             --     (a) As above but also capture next group of consecutive characters belonging to the same word/non-word set
+            -- And if we're in visual mode, respect current selection whilst searching ahead
             local word_mode = ""
 
             for k, v in pairs(character_types) do
               word_mode = string.find(char, "[" .. v .. "]") and k or word_mode
             end
 
-            -- print("got word mode!", word_mode)
             local final_pattern_group = word_captures[word_mode]
-            -- print("Final pattern group:", final_pattern_group)
             local final_pattern = type(word_captures) == "table" and final_pattern_group[ai_type] or final_pattern_group
-            -- print("Final pattern:", final_pattern)
 
-            -- vim.schedule(function() print("final pattern: ", ai_type, text_obj, " - ", final_pattern) end)
-            return mini_ai.find_textobject_region({ final_pattern }, ai_type, opts)
+            local cursor_pos = vim.api.nvim_win_get_cursor(0)
+            vim.schedule(function() print("Searching forwards from: ", vim.inspect(cursor_pos)) end)
+            local found_region = mini_ai.find_textobject_region({ final_pattern }, ai_type, opts)
+            vim.schedule(function() print("old selection: ", vim.inspect(current_selection)) end)
+            vim.schedule(function() print("final region: ", vim.inspect(found_region)) end)
+
+            return found_region
           end,
           ["0"] = function(ai_type, text_obj, opts)
             -- First find out what kind of character is under the cursor
